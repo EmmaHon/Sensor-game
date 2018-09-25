@@ -15,8 +15,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun addStartMenuFragment() {
         val mStartMenuFragment = StartMenuFragment()
-        fragmentManager.beginTransaction().add(R.id.start_menu_fragment, mStartMenuFragment)
-                .addToBackStack(null)
-                .commit()
+        fragmentManager.beginTransaction().add(R.id.start_menu_fragment, mStartMenuFragment).commit()
     }
 }
