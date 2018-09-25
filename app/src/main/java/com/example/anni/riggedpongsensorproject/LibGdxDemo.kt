@@ -1,14 +1,14 @@
 package com.example.anni.riggedpongsensorproject
 
-import com.badlogic.gdx.ApplicationAdapter
+import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 
-class LibGdxDemo : ApplicationAdapter() {
-    private lateinit var batch: SpriteBatch
+class LibGdxDemo : Game() {
+    private lateinit var batch: SpriteBatch // only one Spritebatch
     private lateinit var img: Texture
     private lateinit var font: BitmapFont
 
