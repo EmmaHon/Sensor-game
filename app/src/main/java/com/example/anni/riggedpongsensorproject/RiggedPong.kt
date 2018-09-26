@@ -10,26 +10,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 class RiggedPong : Game() {
 
     lateinit var batch: SpriteBatch // only one Spritebatch
-    lateinit var font: BitmapFont
 
     override fun create() {
         batch = SpriteBatch()
-        font = BitmapFont()
+        this.setScreen(GameScreen(this))
     }
 
     override fun render() {
-        Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        batch.begin()
-        if (font.scaleX < 30) {
-            font.data.scale(1.1f)
-        }
-
-        font.draw(batch, "Hello", 50f, 400f)
-        batch.end()
+        super.render()
     }
 
     override fun dispose() {
+        this.getScreen().dispose()
         batch.dispose()
     }
 }

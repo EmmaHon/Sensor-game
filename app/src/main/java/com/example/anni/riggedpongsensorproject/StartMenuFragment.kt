@@ -23,7 +23,7 @@ class StartMenuFragment: Fragment() {
         val gameLauncherBtn = view.findViewById<Button>(R.id.start_game_btn)
         val leaderboardBtn = view.findViewById<Button>(R.id.leaderboard_btn)
         gameLauncherBtn.setOnClickListener {
-            //launchGame()
+            launchGame()
         }
         leaderboardBtn.setOnClickListener {
             launchLeaderboardFragment()
