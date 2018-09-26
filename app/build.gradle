@@ -6,7 +6,6 @@ apply plugin: 'kotlin-android-extensions'
 
 ext {
     gdxVersion = '1.9.8'
-    roboVMVersion = '2.3.3'
     box2DLightsVersion = '1.4'
     ashleyVersion = '1.7.3'
     aiVersion = '1.8.1'
@@ -57,8 +56,6 @@ dependencies {
     natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
     natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
     natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
-    implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-ai:$aiVersion"
     implementation "com.badlogicgames.ashley:ashley:$ashleyVersion"
     implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
@@ -67,12 +64,6 @@ dependencies {
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
-    implementation "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
-    natives "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-armeabi"
-    natives "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-armeabi-v7a"
-    natives "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-arm64-v8a"
-    natives "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-x86"
-    natives "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-x86_64"
     implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
 }
 
