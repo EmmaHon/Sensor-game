@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 
-class LibGdxDemo : Game() {
-    private lateinit var batch: SpriteBatch // only one Spritebatch
-    private lateinit var img: Texture
-    private lateinit var font: BitmapFont
+class RiggedPong : Game() {
+
+    lateinit var batch: SpriteBatch // only one Spritebatch
+    lateinit var font: BitmapFont
 
     override fun create() {
         batch = SpriteBatch()
@@ -31,6 +31,5 @@ class LibGdxDemo : Game() {
 
     override fun dispose() {
         batch.dispose()
-        img.dispose()
     }
 }

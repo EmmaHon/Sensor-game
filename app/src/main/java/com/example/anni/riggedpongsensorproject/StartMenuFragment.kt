@@ -1,6 +1,7 @@
 package com.example.anni.riggedpongsensorproject
 
 import android.app.Fragment
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,8 +31,8 @@ class StartMenuFragment: Fragment() {
     }
 
     private fun launchGame() {
-        //val intent = Intent(activity, Launcher::class.java)
-        //startActivity(intent)
+        val intent = Intent(activity, Launcher::class.java)
+        startActivity(intent)
     }
 
     private fun launchLeaderboardFragment() {
