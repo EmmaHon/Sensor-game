@@ -1,9 +1,13 @@
 package com.example.anni.riggedpongsensorproject
 
 import android.content.res.Resources
+import android.util.Log
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.*
+
 
 class GameScreen(mGame: RiggedPong): Screen {
 
@@ -16,7 +20,16 @@ class GameScreen(mGame: RiggedPong): Screen {
     private val screenWidth = Resources.getSystem().displayMetrics.widthPixels.toFloat()
     private val screenHeight = Resources.getSystem().displayMetrics.heightPixels.toFloat()
 
-    //private var objectBall = GameObjectBall()
+    //Box2D variables
+    private val world = World(Vector2(0f,0f), true)
+    private val b2dr = Box2DDebugRenderer()
+
+   /* private val bdef = BodyDef()
+    private val shape = PolygonShape()
+    private val fdef = FixtureDef()
+    private lateinit var body: Body*/
+
+    private val playerBall = GameObjectBall(world, this)
     private var score = 0
     private var highScore = 0
     private var rounds = 3
@@ -32,7 +45,7 @@ class GameScreen(mGame: RiggedPong): Screen {
 
     private fun renderBackground() {
         val backgroundTexture = getAtlas().findRegion("RP_Asset_Play_Area")
-        spriteBatch.draw( backgroundTexture, 0f, 0f, screenWidth, screenHeight)
+        spriteBatch.draw(backgroundTexture, 0f, 0f, screenWidth, screenHeight)
     }
 
     override fun hide() {}
@@ -49,6 +62,7 @@ class GameScreen(mGame: RiggedPong): Screen {
         game.batch.begin()
         // Drawing goes here!
         renderBackground()
+        playerBall.draw(spriteBatch)
         game.batch.end()
     }
 

@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 class RiggedPong : Game() {
 
     lateinit var batch: SpriteBatch // only one Spritebatch
+    companion object {
+        val PPM = 100
+    }
 
     override fun create() {
         batch = SpriteBatch()

@@ -1,33 +1,44 @@
 package com.example.anni.riggedpongsensorproject
 
-import com.badlogic.gdx.Screen
-import com.badlogic.gdx.graphics.Texture
+import android.util.Log
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.physics.box2d.*
 
-class GameObjectBall(mWorld: World, mGameScreen: Screen): Sprite() {
+class GameObjectBall(mWorld: World, mGameScreen: GameScreen): Sprite() {
 
-    private val world = mWorld
-    private val gameScreen = mGameScreen
-    private lateinit var body: Body
-    private val ballTexture = Texture("")
+    val world = mWorld
+    lateinit var b2body: Body
+    private var gameScreen = mGameScreen
+    //private val gameScreen = mGameScreen
+    //private val ballTexture = Texture("")
+    private var ballStand = TextureRegion()
 
     init {
-        //super.(gameScreen.getAtlas().findRegion("RP_Asset_Ball"))
+        val ballRegion = gameScreen.getAtlas().findRegion("RP_Asset_Ball")
         createBall()
+        setBounds(0f,0f,60f, 60f)
+        setRegion(ballRegion)
+        ballStand.setRegion(ballRegion)
     }
 
     private fun createBall() {
+        Log.d("DEBUG", "create ball sprite")
         var bodyDef = BodyDef()
         bodyDef.type = BodyDef.BodyType.DynamicBody
-        bodyDef.position.set(0f, 0f)
+        bodyDef.position.set(32f, 32f)
 
-        body = world.createBody(bodyDef)
+        b2body = world.createBody(bodyDef)
 
         val fDef = FixtureDef()
         val roundShape = CircleShape()
-        //shape.radius = (5/ Game.PPM)
+        roundShape.radius = (5f)
         fDef.shape = roundShape
-        body.createFixture(fDef)
+        b2body.createFixture(fDef)
+    }
+
+    override fun draw(batch: Batch) {
+        super.draw(batch)
     }
 }
