@@ -13,7 +13,7 @@ class GameObjectBall(mWorld: World, mGameScreen: Screen): Sprite() {
     private val ballTexture = Texture("")
 
     init {
-        gameScreen.getAtlas().findRegion("RP_Asset_Ball")
+        //super.(gameScreen.getAtlas().findRegion("RP_Asset_Ball"))
         createBall()
     }
 
