@@ -52,7 +52,7 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
 
     private val playerBall = GameObjectBall(world, this)
     private var score = 0
-    private var highScore = 0
+    private var currentHighScore = 0
     private var rounds = 3
 
 
