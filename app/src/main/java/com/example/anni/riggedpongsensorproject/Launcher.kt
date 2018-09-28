@@ -10,6 +10,6 @@ class Launcher : AndroidApplication() {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         val config = AndroidApplicationConfiguration()
-        initialize(RiggedPong(), config)
+        initialize(RiggedPong(this), config)
     }
 }
