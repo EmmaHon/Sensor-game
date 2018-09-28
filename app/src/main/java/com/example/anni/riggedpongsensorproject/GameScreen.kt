@@ -1,7 +1,6 @@
 package com.example.anni.riggedpongsensorproject
 
 import android.content.res.Resources
-import android.util.Log
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
@@ -31,7 +30,7 @@ class GameScreen(mGame: RiggedPong): Screen {
 
     private val playerBall = GameObjectBall(world, this)
     private var score = 0
-    private var highScore = 0
+    private var currentHighScore = 0
     private var rounds = 3
 
 

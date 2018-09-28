@@ -9,8 +9,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        //check if the sensor is available
+        //requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        //TODO: check if the sensor is available
         addStartMenuFragment()
     }
 
