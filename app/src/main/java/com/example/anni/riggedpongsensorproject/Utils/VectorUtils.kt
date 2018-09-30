@@ -2,7 +2,6 @@ package com.example.anni.riggedpongsensorproject.Utils
 
 import com.badlogic.gdx.math.Vector2
 
-
 object VectorUtils {
 
     internal val TAG = VectorUtils::class.java.simpleName

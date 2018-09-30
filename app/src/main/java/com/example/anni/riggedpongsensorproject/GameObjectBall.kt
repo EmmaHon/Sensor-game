@@ -1,22 +1,17 @@
 package com.example.anni.riggedpongsensorproject
 
-<<<<<<< HEAD
 import android.util.Log
-=======
-
-import com.badlogic.gdx.physics.box2d.BodyDef
-import android.util.Log
-import com.badlogic.gdx.Input
->>>>>>> 2cba70e3251a0c4c28139ead456855a046e5fabb
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.BodyDef
+import com.badlogic.gdx.physics.box2d.CircleShape
+import com.badlogic.gdx.physics.box2d.FixtureDef
+import com.example.anni.riggedpongsensorproject.Utils.VectorUtils
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.physics.box2d.*
-import com.badlogic.gdx.math.Vector2
-import com.example.anni.riggedpongsensorproject.Utils.VectorUtils
-import android.R.attr.x
-import android.R.attr.y
 
 
 class GameObjectBall(mWorld: World, mGameScreen: GameScreen) : Sprite() {
@@ -33,20 +28,18 @@ class GameObjectBall(mWorld: World, mGameScreen: GameScreen) : Sprite() {
     private var gameScreen = mGameScreen
 
     // Sprite Texture
-    private val ballTextureRegion = gameScreen.getAtlas().findRegion("RP_Asset_Ball")
+    private val ballTextureRegion = gameScreen.getAtlasObjects().findRegion("RP_Asset_Ball")
     private val ballTextureHeight = ballTextureRegion.originalHeight.toFloat()
     private val ballTextureWidth = ballTextureRegion.originalWidth.toFloat()
-<<<<<<< HEAD
     //private var ballStand = TextureRegion()
-=======
-    private var ballStand = TextureRegion()
+
+    // ball movement
     private val MAX_SPEED = 240f
     private val MAX_ACCELERATION = 10f
     private val MAX_DECELERATION = MAX_ACCELERATION / 2
     private val position = Vector2() //ball position
     private val velocity = Vector2()
     private val acceleration = Vector2()
->>>>>>> 2cba70e3251a0c4c28139ead456855a046e5fabb
 
     init {
         createBall()
@@ -58,7 +51,6 @@ class GameObjectBall(mWorld: World, mGameScreen: GameScreen) : Sprite() {
         setBounds(xBallPosition, yBallPosition, ballTextureWidth, ballTextureHeight)
         setRegion(ballTextureRegion)
         //ballStand.setRegion(ballTextureRegion)
-
     }
 
     private fun createBall() {
@@ -68,7 +60,6 @@ class GameObjectBall(mWorld: World, mGameScreen: GameScreen) : Sprite() {
 
         b2body = world.createBody(bodyDef)
 
-
         val fDef = FixtureDef()
         val roundShape = CircleShape()
         roundShape.radius = (5f)
@@ -77,16 +68,13 @@ class GameObjectBall(mWorld: World, mGameScreen: GameScreen) : Sprite() {
 
     }
 
-    fun setInitialPosition(
-            x: Float,
-            y: Float) {
+    fun setInitialPosition(x: Float, y: Float) {
         position.set(x, y)
     }
 
     fun moveBall(delta: Float) {
-        Log.d("DEBUG", "move the ball")
-        Log.d("RiggedPong.LOG",
-                "${Gdx.input.getAccelerometerX()}, ${Gdx.input.getAccelerometerY()}, ${Gdx.input.getAccelerometerZ()}")
+        //Log.d("RiggedPong.LOG","${Gdx.input.accelerometerX}, ${Gdx.input.accelerometerY}, ${Gdx.input.accelerometerZ}")
+
         // check the input and calculate the acceleration
         if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
 

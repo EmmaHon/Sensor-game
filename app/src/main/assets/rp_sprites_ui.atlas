@@ -1,0 +1,83 @@
+
+rp_sprites_ui.png
+size: 512,64
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+RP_Asset_Number_Zero
+  rotate: false
+  xy: 2, 2
+  size: 36, 60
+  orig: 36, 60
+  offset: 0, 0
+  index: 0
+RP_Asset_Number_One
+  rotate: false
+  xy: 40, 2
+  size: 36, 60
+  orig: 36, 60
+  offset: 0, 0
+  index: 1
+RP_Asset_Number_Two
+  rotate: false
+  xy: 78, 2
+  size: 36, 60
+  orig: 36, 60
+  offset: 0, 0
+  index: 2
+RP_Asset_Number_Three
+  rotate: false
+  xy: 116, 2
+  size: 36, 60
+  orig: 36, 60
+  offset: 0, 0
+  index: 3
+RP_Asset_Number_Four
+  rotate: false
+  xy: 154, 2
+  size: 36, 60
+  orig: 36, 60
+  offset: 0, 0
+  index: 4
+RP_Asset_Number_Five
+  rotate: false
+  xy: 192, 2
+  size: 36, 60
+  orig: 36, 60
+  offset: 0, 0
+  index: 5
+RP_Asset_Number_Six
+  rotate: false
+  xy: 230, 2
+  size: 36, 60
+  orig: 36, 60
+  offset: 0, 0
+  index: 6
+RP_Asset_Number_Seven
+  rotate: false
+  xy: 268, 2
+  size: 36, 60
+  orig: 36, 60
+  offset: 0, 0
+  index: 7
+RP_Asset_Number_Eight
+  rotate: false
+  xy: 306, 2
+  size: 36, 60
+  orig: 36, 60
+  offset: 0, 0
+  index: 8
+RP_Asset_Number_Nine
+  rotate: false
+  xy: 344, 2
+  size: 36, 60
+  orig: 36, 60
+  offset: 0, 0
+  index: 9
+RP_UI_Round
+  rotate: false
+  xy: 382, 22
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1

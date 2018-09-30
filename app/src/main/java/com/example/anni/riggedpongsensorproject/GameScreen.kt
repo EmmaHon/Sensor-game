@@ -12,6 +12,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
+import com.example.anni.riggedpongsensorproject.Sprites.Bat
+import com.example.anni.riggedpongsensorproject.Sprites.RoundIndicator
+import com.example.anni.riggedpongsensorproject.Sprites.ScoreNumber
 
 class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventListener {
 
@@ -23,10 +26,11 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
     // Camera
     private val camera = OrthographicCamera()
     // Sprites
-    private val textureAtlas = TextureAtlas("rp_sprites.atlas")
+    private val textureAtlasObjects = TextureAtlas("rp_sprites.atlas")
+    private val textureAtlasUI = TextureAtlas("rp_sprites_ui.atlas")
     private val screenWidth = Resources.getSystem().displayMetrics.widthPixels.toFloat()
     private val screenHeight = Resources.getSystem().displayMetrics.heightPixels.toFloat()
-    // Create our Sensor Manager
+    // Create Sensor Manager
     private var SM= activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     // Accelerometer Sensor
     private var sensor: Sensor? = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -35,7 +39,13 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
     private val world = World(Vector2(0f,0f), true)
     private val b2dr = Box2DDebugRenderer()
 
+    // Player variables
     private val playerBall = GameObjectBall(world, this)
+    private val roundSprite = RoundIndicator(this)
+    private val scoreNumbers = ScoreNumber(this)
+    private val batLeft = Bat(this)
+    private val batRight = Bat(this)
+
     private var currentScore = 0
     private var currentHighScore = 0
     private var rounds = 3
@@ -43,17 +53,19 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
 
     init {
         camera.setToOrtho(false, screenWidth, screenHeight)
-
         SM.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
-
     }
 
-    fun getAtlas(): TextureAtlas {
-        return textureAtlas
+    fun getAtlasObjects(): TextureAtlas {
+        return textureAtlasObjects
+    }
+
+    fun getAtlasUI(): TextureAtlas {
+        return textureAtlasUI
     }
 
     private fun renderBackground() {
-        val backgroundTexture = getAtlas().findRegion("RP_Asset_Play_Area")
+        val backgroundTexture = getAtlasObjects().findRegion("RP_Asset_Play_Area")
         spriteBatch.draw(backgroundTexture, 0f, 0f, screenWidth, screenHeight)
     }
 
@@ -71,6 +83,12 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
         game.batch.begin()
         // Drawing goes here!
         renderBackground()
+        roundSprite.draw(spriteBatch)
+        scoreNumbers.draw(spriteBatch)
+        batLeft.draw(spriteBatch)
+        batRight.draw(spriteBatch)
+        batLeft.setPosition("left")
+        batRight.setPosition("right")
         playerBall.draw(spriteBatch)
         playerBall.moveBall(delta)
         game.batch.end()
