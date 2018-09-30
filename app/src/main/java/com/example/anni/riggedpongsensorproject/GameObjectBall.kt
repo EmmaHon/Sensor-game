@@ -1,5 +1,6 @@
 package com.example.anni.riggedpongsensorproject
 
+import android.util.Log
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
@@ -8,13 +9,22 @@ import com.badlogic.gdx.physics.box2d.*
 
 class GameObjectBall(mWorld: World, mGameScreen: GameScreen): Sprite() {
 
+    // finals
+    companion object {
+        val BALL_STATE_NORMAL = 0
+        val BALL_STATE_HIT_WALL = 1
+        val BALL_STATE_HIT_BAT = 2
+    }
+
     private val world = mWorld
     private lateinit var b2body: Body
     private var gameScreen = mGameScreen
+
+    // Sprite Texture
     private val ballTextureRegion = gameScreen.getAtlas().findRegion("RP_Asset_Ball")
     private val ballTextureHeight = ballTextureRegion.originalHeight.toFloat()
     private val ballTextureWidth = ballTextureRegion.originalWidth.toFloat()
-    private var ballStand = TextureRegion()
+    //private var ballStand = TextureRegion()
 
     init {
         createBall()
