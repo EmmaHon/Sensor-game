@@ -7,7 +7,9 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
@@ -36,15 +38,15 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
     private var sensor: Sensor? = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
     //Box2D variables
-    private val world = World(Vector2(0f,0f), true)
+    private val world = World(Vector2(0f,0f), true) //world, no gravity
     private val b2dr = Box2DDebugRenderer()
 
     // Player variables
-    private val playerBall = GameObjectBall(world, this)
+    private val playerBall = GameObjectBall(this, spriteBatch, world)
+    private val batLeft = Bat(this, spriteBatch, world)
+    private val batRight = Bat(this, spriteBatch, world)
     private val roundSprite = RoundIndicator(this)
     private val scoreNumbers = ScoreNumber(this)
-    private val batLeft = Bat(this)
-    private val batRight = Bat(this)
 
     private var currentScore = 0
     private var currentHighScore = 0
@@ -80,15 +82,13 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
         // coordinate system specified by the camera.
         game.batch.projectionMatrix = camera.combined
 
+        // clear the screen
+        Gdx.gl.glClearColor(1f, 1f, 1f, 1f)
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+
         game.batch.begin()
         // Drawing goes here!
         renderBackground()
-        roundSprite.draw(spriteBatch)
-        scoreNumbers.draw(spriteBatch)
-        batLeft.draw(spriteBatch)
-        batRight.draw(spriteBatch)
-        batLeft.setPosition("left")
-        batRight.setPosition("right")
         playerBall.draw(spriteBatch)
         playerBall.moveBall(delta)
         game.batch.end()
@@ -101,6 +101,7 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
     override fun resize(width: Int, height: Int) {}
 
     override fun dispose() {
-        //this.dispose()
+        world.dispose()
+        this.dispose()
     }
 }

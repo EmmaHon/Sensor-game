@@ -64,7 +64,6 @@ dependencies {
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
-    implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
 }
 
 // called every time gradle gets executed, takes the native dependencies of
