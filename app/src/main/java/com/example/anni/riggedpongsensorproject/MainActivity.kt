@@ -1,8 +1,8 @@
 package com.example.anni.riggedpongsensorproject
 
-import android.hardware.Sensor
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.example.anni.riggedpongsensorproject.fragments.StartMenuFragment
 
 class MainActivity : AppCompatActivity() {
 

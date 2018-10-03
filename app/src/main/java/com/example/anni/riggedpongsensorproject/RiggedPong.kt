@@ -3,19 +3,31 @@ package com.example.anni.riggedpongsensorproject
 import android.app.Activity
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.example.anni.riggedpongsensorproject.screens.GameScreen
 
 class RiggedPong(activity: Activity) : Game() {
 
-    lateinit var batch: SpriteBatch // only one Spritebatch
-    val mActivity = activity
-
     companion object {
-        val PPM = 100
+        const val APP_TITLE = "rigged pong"
+        const val APP_VERSION = 0.1
+        const val APP_WIDTH = 1920f
+        const val APP_HEIGHT = 1080f
+        const val SCALE = 2f
+        const val FPS = 60f
+        const val PPM = 32f //Pixel Per Meter
     }
 
+    // batches
+    private lateinit var batch: SpriteBatch
+
+    fun getSpriteBatch(): SpriteBatch {
+        return batch
+    }
+
+    // called when application is created
     override fun create() {
         batch = SpriteBatch()
-        this.setScreen(GameScreen(this, mActivity))
+        this.setScreen(GameScreen(this))
     }
 
     override fun render() {
@@ -26,4 +38,5 @@ class RiggedPong(activity: Activity) : Game() {
         this.getScreen().dispose()
         batch.dispose()
     }
+
 }

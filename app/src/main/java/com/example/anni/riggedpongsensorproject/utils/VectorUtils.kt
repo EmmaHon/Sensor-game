@@ -1,4 +1,4 @@
-package com.example.anni.riggedpongsensorproject.Utils
+package com.example.anni.riggedpongsensorproject.utils
 
 import com.badlogic.gdx.math.Vector2
 
