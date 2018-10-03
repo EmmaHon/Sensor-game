@@ -11,6 +11,7 @@ import com.example.anni.riggedpongsensorproject.screens.GameScreen
 import com.example.anni.riggedpongsensorproject.utils.VectorUtils
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.example.anni.riggedpongsensorproject.RiggedPong
+import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 
 class GameObjectBall(mGameScreen: GameScreen) : Sprite() {
@@ -22,6 +23,7 @@ class GameObjectBall(mGameScreen: GameScreen) : Sprite() {
     private val ballTextureHeight = ballTextureRegion.originalHeight.toFloat()
     private val ballTextureWidth = ballTextureRegion.originalWidth.toFloat()
     private val ballRadius = (32f /PPM)
+    private val ballRestitution = 1f
     // Movement
     private val MAX_SPEED = 240f
     private val MAX_ACCELERATION = 10f
@@ -47,24 +49,18 @@ class GameObjectBall(mGameScreen: GameScreen) : Sprite() {
         var bodyDef = BodyDef()
         bodyDef.type = BodyDef.BodyType.DynamicBody
         bodyDef.fixedRotation = true
-        bodyDef.position.set(xPos, yPos)
+        bodyDef.position.set(xPos/ PPM, yPos/ PPM)
         b2bodyBall = world.createBody(bodyDef)
 
-        val fDef = FixtureDef()
         val roundShape = CircleShape()
         roundShape.radius = (radius/ 2f)
-        fDef.shape = roundShape
-        fDef.density = 1f
-        b2bodyBall.createFixture(fDef)
+        b2bodyBall.createFixture(roundShape, DENSITY)
+        //fixtureDefinition.restitution affects "bounciness"
         roundShape.dispose()
        // return b2body
     }
 
     fun moveBall(delta: Float) {
-        val xBallPosition: Float = (Gdx.graphics.width/ 2f - ballTextureWidth/ 2f)
-        val yBallPosition: Float = (Gdx.graphics.height/ 2f - ballTextureHeight/ 2f)
-        x = xBallPosition
-        y = yBallPosition
         //Log.d("RiggedPong.LOG", "${Gdx.input.accelerometerX}, ${Gdx.input.accelerometerY}, ${Gdx.input.accelerometerZ}")
         // check the input and calculate the acceleration
         if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
@@ -119,7 +115,7 @@ class GameObjectBall(mGameScreen: GameScreen) : Sprite() {
                     acceleration.y = -(acceleration.y - velocity.y)
                 }
             } else if (velocity.y < 0) {
-                acceleration.y = MAX_DECELERATION;
+                acceleration.y = MAX_DECELERATION
                 if (velocity.y + acceleration.y > 0) {
                     acceleration.y = (acceleration.y - velocity.y)
                 }
@@ -131,6 +127,7 @@ class GameObjectBall(mGameScreen: GameScreen) : Sprite() {
 
         // modify and check the ship's position, applying the delta parameter
         position.add(velocity.x * delta, velocity.y * delta)
+        getBallBody().position.add(velocity.x * delta, velocity.y * delta)
 
         // we can't let the ship go off the screen, so here we check the new
         // ship's position against the stage's dimensions, correcting it if

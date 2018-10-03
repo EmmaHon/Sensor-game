@@ -10,6 +10,10 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.example.anni.riggedpongsensorproject.sprites.GameObjectBall
 import com.example.anni.riggedpongsensorproject.RiggedPong
+import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_FPS
+import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_HEIGHT
+import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_WIDTH
+import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.sprites.Bat
 
 class GameScreen(mGame: RiggedPong): Screen {
@@ -17,25 +21,28 @@ class GameScreen(mGame: RiggedPong): Screen {
     // batch
     private val batch = mGame.getSpriteBatch()
     // camera
-    private val camera = OrthographicCamera()
+    private val camera = OrthographicCamera(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
     // sprites
     private val textureAtlas = TextureAtlas("rp_sprites.atlas")
     // screen size
     private val screenWidth = Resources.getSystem().displayMetrics.widthPixels.toFloat()
     private val screenHeight = Resources.getSystem().displayMetrics.heightPixels.toFloat()
     // box2d
-    private val world = World(Vector2(0f,0f), true) //no gravity
+    private lateinit var world: World
     private val b2Debug = Box2DDebugRenderer() // render body objects for debugging
     // player
-     private val playerBall = GameObjectBall(this)
+    private lateinit var playerBall: GameObjectBall
     // objects
-   // private val batLeft = Bat(this, 0)
-    //private val batRight = Bat(this, 1)
+    private lateinit var batLeft: Bat
+    private lateinit var batRight: Bat
 
+    // what needs to be in memory, otherwise move to show-method
     init {
+        // sets a viewport according to given width and height
         camera.setToOrtho(false, screenWidth, screenHeight)
     }
 
+    // public functions
     fun getWorld(): World {
         return world
     }
@@ -44,71 +51,43 @@ class GameScreen(mGame: RiggedPong): Screen {
         return textureAtlas
     }
 
-    fun createWallBody(world: World, x: Float, y: Float, width: Float, height: Float): Body {
-        val bodyDef = BodyDef()
-        bodyDef.type = BodyDef.BodyType.StaticBody
-        bodyDef.fixedRotation = true
-        // 1 to 1 dimensions, meaning 1 in physics engine is 1 pixel
-        // Set our body to the same position as our sprite (for ball and bats)
-        bodyDef.position.set(x/ RiggedPong.PPM, y/ RiggedPong.PPM)
-        // Create a body in the world using our definition
-        val b2body = world.createBody(bodyDef)
-        // Now define the dimensions of the physics shape
-        val wallShape = PolygonShape()
-        wallShape.setAsBox(width /2, height/2)
-        var fixtureDef = FixtureDef()
-        fixtureDef.shape = wallShape
-        fixtureDef.density = 1f
-        var fixture = b2body.createFixture(fixtureDef)
-        // Shape is the only disposable of the lot, so get rid of it
-        wallShape.dispose()
-        return b2body
-    }
-
-    private fun renderBackground() {
-        val backgroundTexture = textureAtlas.findRegion("RP_Asset_Play_Area")
-        batch.draw(backgroundTexture, 0f, 0f, screenWidth, screenHeight)
-    }
-
-    private fun renderBats() {
-       // batLeft.draw(batch)
-        //batRight.draw(batch)
-    }
-
-    private fun update() {
-        world.step(1/RiggedPong.FPS, 6, 2)
+    fun update(delta: Float) {
+        // advance the world by the amount of time that has elapsed
+        world.step(1/APP_FPS, 6, 2)
+        Gdx.gl.glClearColor(0.25f, 0.25f, 0.25f, 1f)
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         updateCamera()
-        //batch.projectionMatrix = camera.combined
     }
 
-    private fun updateCamera() {
-        val position = camera.position
-        position.x = playerBall.getBallBody().position.x * RiggedPong.PPM
-        position.y = playerBall.getBallBody().position.y * RiggedPong.PPM
-        camera.position.set(position)
+    fun updateCamera() {
         camera.update()
+    }
+
+    // functions from Screen
+    override fun show() {
+        world = World(Vector2(0f,0f), true)
+        createWalls()
+        // player
+        playerBall = GameObjectBall(this)
+        // objects
+        batLeft = Bat(this, 0)
+        batRight = Bat(this, 1)
+        batch.projectionMatrix = camera.combined
     }
 
     //called ~60 times per second, game logic updates performed here
     override fun render(delta: Float) {
-        update()
-        // clear the screen
-        Gdx.gl.glClearColor(0.25f, 0.25f, 0.25f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        update(delta)
         batch.begin()
-        renderBackground()
-       // batch.draw(playerBall.texture, playerBall.getBallBody().position.x * RiggedPong.PPM - (playerBall.texture.width/ 2),
-         //       playerBall.getBallBody().position.y * RiggedPong.PPM - (playerBall.texture.width/ 2))
-        playerBall.draw(batch)
-       // playerBall.moveBall(delta)
+        //renderBackground()
+        batch.draw(playerBall, playerBall.x, playerBall.y)
+        renderBats()
+        //playerBall.moveBall(delta)
         batch.end()
-        b2Debug.render(world, camera.combined.scl(RiggedPong.PPM))
+        b2Debug.render(world, camera.combined.cpy().scl(PPM))
     }
 
     override fun hide() {}
-
-    override fun show() { //TODO: create wall body here!
-    }
 
     // called when home btn is pressed on android or when receiving a call
     // save game state here
@@ -125,27 +104,39 @@ class GameScreen(mGame: RiggedPong): Screen {
     // called when app is destroyed
     override fun dispose() {
         textureAtlas.dispose()
-        b2Debug.dispose()
-        world.dispose()
-        this.dispose()
     }
 
-  /*  private fun createWalls() {
-        var body: Body
-        var bodyDef = BodyDef()
-        bodyDef.type = BodyDef.BodyType.StaticBody
-        body = world.createBody(bodyDef)
+    // private functions
+    private fun renderBackground() {
+        val backgroundTexture = textureAtlas.findRegion("RP_Asset_Play_Area")
+        batch.draw(backgroundTexture, 0f, 0f, screenWidth, screenHeight)
+    }
 
+    private fun renderBats() {
+        batch.draw(batLeft, batLeft.x, batLeft.y)
+        batch.draw(batRight, batRight.x, batRight.y)
+    }
+
+    private fun createWalls() {
+        val bDef = BodyDef()
+        bDef.type = BodyDef.BodyType.StaticBody
+        val body = world.createBody(bDef)
+        val shape = createChainShape()
+        body.createFixture(shape, 0f)
+        shape.dispose()
+    }
+
+    private fun createChainShape(): ChainShape {
         val chainShape = ChainShape()
-        var vertices = Array<Vector2>()
-        vertices.add(Vector2(0f/ RiggedPong.PPM , 0f))
-        vertices.add(Vector2(camera.viewportWidth/ RiggedPong.PPM, 0f))
-        vertices.add(Vector2(camera.viewportWidth/ RiggedPong.PPM, camera.viewportHeight/ RiggedPong.PPM))
-        vertices.add(Vector2(0f/ RiggedPong.PPM, camera.viewportHeight/ RiggedPong.PPM))
-        vertices.add(Vector2(0f / RiggedPong.PPM, 0F))
-        chainShape.createChain(vertices.items)
-
-        body.createFixture(chainShape, 1f)
-        chainShape.dispose()
-    }*/
+        // create a full "box" along the screen sides
+        val vertices = arrayOfNulls<Vector2>(5)
+        val adjustFactor = 2f
+        vertices[0] = Vector2(1f/ PPM/ adjustFactor, 1f/ PPM/ adjustFactor)
+        vertices[1] = Vector2(camera.viewportWidth/ PPM/ adjustFactor, 1f/ PPM/ adjustFactor)
+        vertices[2] = Vector2(camera.viewportWidth/ PPM/ adjustFactor, camera.viewportHeight/ PPM/ adjustFactor)
+        vertices[3] = Vector2(1f/ PPM/ adjustFactor, camera.viewportHeight/ PPM/ adjustFactor)
+        vertices[4] = Vector2(1f/ PPM/ adjustFactor, 1f/ PPM/ adjustFactor)
+        chainShape.createChain(vertices)
+        return chainShape
+    }
 }
