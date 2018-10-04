@@ -13,8 +13,9 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.example.anni.riggedpongsensorproject.RiggedPong
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
+import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
 
-class GameObjectBall(mGameScreen: GameScreen) : Sprite() {
+class GameObjectBall(mGameScreen: GameScreen, xPos: Float, yPos: Float) : Sprite() {
 
     private val world = mGameScreen.getWorld()
     private lateinit var b2bodyBall: Body
@@ -22,23 +23,24 @@ class GameObjectBall(mGameScreen: GameScreen) : Sprite() {
     private val ballTextureRegion = mGameScreen.getAtlasObjects().findRegion("RP_Asset_Ball")
     private val ballTextureHeight = ballTextureRegion.originalHeight.toFloat()
     private val ballTextureWidth = ballTextureRegion.originalWidth.toFloat()
-    private val ballRadius = (32f /PPM)
+    private val ballRadius = 32f
     private val ballRestitution = 1f
     // Movement
     private val MAX_SPEED = 240f
     private val MAX_ACCELERATION = 10f
     private val MAX_DECELERATION = MAX_ACCELERATION / 2
-    private val BALL_START_X = (Gdx.graphics.width/ 2f - ballTextureWidth/ 2f)
-    private val BALL_START_Y = (Gdx.graphics.height/ 2f - ballTextureHeight/ 2f)
+    private val ballStartX = xPos
+    private val ballStartY = yPos
     private val position = Vector2() //ball position
     private val velocity = Vector2()
     private val acceleration = Vector2()
 
+    //(Gdx.graphics.width/ 2f - ballTextureWidth/ 2f)
     init {
+        createBallBody(world, ballStartX, ballStartY, ballRadius)
         // position to the center of the screen and size of the ball
+        setBounds(getBallBody().position.x * 61.5f , getBallBody().position.y * 60f , ballTextureWidth, ballTextureHeight)
         setRegion(ballTextureRegion)
-        setBounds(BALL_START_X, BALL_START_Y, ballTextureWidth, ballTextureHeight)
-        createBallBody(world, BALL_START_X, BALL_START_Y, ballRadius)
     }
 
     fun getBallBody(): Body {
@@ -49,11 +51,10 @@ class GameObjectBall(mGameScreen: GameScreen) : Sprite() {
         var bodyDef = BodyDef()
         bodyDef.type = BodyDef.BodyType.DynamicBody
         bodyDef.fixedRotation = true
-        bodyDef.position.set(xPos/ PPM, yPos/ PPM)
+        bodyDef.position.set(xPos/ PPM/ SCALE, yPos/ PPM/ SCALE)
         b2bodyBall = world.createBody(bodyDef)
-
         val roundShape = CircleShape()
-        roundShape.radius = (radius/ 2f)
+        roundShape.radius = (radius/ PPM/ SCALE)
         b2bodyBall.createFixture(roundShape, DENSITY)
         //fixtureDefinition.restitution affects "bounciness"
         roundShape.dispose()
@@ -127,7 +128,6 @@ class GameObjectBall(mGameScreen: GameScreen) : Sprite() {
 
         // modify and check the ship's position, applying the delta parameter
         position.add(velocity.x * delta, velocity.y * delta)
-        getBallBody().position.add(velocity.x * delta, velocity.y * delta)
 
         // we can't let the ship go off the screen, so here we check the new
         // ship's position against the stage's dimensions, correcting it if

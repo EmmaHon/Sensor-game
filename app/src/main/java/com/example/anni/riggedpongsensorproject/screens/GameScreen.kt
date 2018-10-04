@@ -8,13 +8,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
+import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef
 import com.example.anni.riggedpongsensorproject.sprites.GameObjectBall
 import com.example.anni.riggedpongsensorproject.RiggedPong
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_FPS
-import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_HEIGHT
-import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_WIDTH
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
-import com.example.anni.riggedpongsensorproject.sprites.Bat
+import com.example.anni.riggedpongsensorproject.sprites.DeathZone
+import com.example.anni.riggedpongsensorproject.sprites.Paddle
 
 class GameScreen(mGame: RiggedPong): Screen {
 
@@ -33,8 +33,10 @@ class GameScreen(mGame: RiggedPong): Screen {
     // player
     private lateinit var playerBall: GameObjectBall
     // objects
-    private lateinit var batLeft: Bat
-    private lateinit var batRight: Bat
+    private lateinit var paddleLeft: Paddle
+    private lateinit var paddleRight: Paddle
+    private lateinit var deathZoneLeft: DeathZone
+    private lateinit var deathZoneRight: DeathZone
 
     // what needs to be in memory, otherwise move to show-method
     init {
@@ -54,6 +56,11 @@ class GameScreen(mGame: RiggedPong): Screen {
     fun update(delta: Float) {
         // advance the world by the amount of time that has elapsed
         world.step(1/APP_FPS, 6, 2)
+
+        //get mouse position - move paddle
+        //var touchPositionToWorld = -(Gdx.input.y) - camera.viewportHeight / PPM
+        //paddleLeft.getPaddleBody().setTransform(paddleLeft.getPaddleBody().position.x, touchPositionToWorld, paddleLeft.getPaddleBody().angle)
+        //clear the screen
         Gdx.gl.glClearColor(0.25f, 0.25f, 0.25f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         updateCamera()
@@ -66,12 +73,7 @@ class GameScreen(mGame: RiggedPong): Screen {
     // functions from Screen
     override fun show() {
         world = World(Vector2(0f,0f), true)
-        createWalls()
-        // player
-        playerBall = GameObjectBall(this)
-        // objects
-        batLeft = Bat(this, 0)
-        batRight = Bat(this, 1)
+        setupGameArea()
         batch.projectionMatrix = camera.combined
     }
 
@@ -79,10 +81,10 @@ class GameScreen(mGame: RiggedPong): Screen {
     override fun render(delta: Float) {
         update(delta)
         batch.begin()
-        //renderBackground()
+        renderBackground()
         batch.draw(playerBall, playerBall.x, playerBall.y)
         renderBats()
-        //playerBall.moveBall(delta)
+        playerBall.moveBall(delta)
         batch.end()
         b2Debug.render(world, camera.combined.cpy().scl(PPM))
     }
@@ -113,8 +115,22 @@ class GameScreen(mGame: RiggedPong): Screen {
     }
 
     private fun renderBats() {
-        batch.draw(batLeft, batLeft.x, batLeft.y)
-        batch.draw(batRight, batRight.x, batRight.y)
+        batch.draw(paddleLeft, paddleLeft.x, paddleLeft.y)
+        batch.draw(paddleRight, paddleRight.x, paddleRight.y)
+    }
+
+    private fun setupGameArea() {
+        createWalls()
+        // player
+        playerBall = GameObjectBall(this, camera.viewportWidth/2, camera.viewportHeight/2)
+        // objects
+        paddleLeft = Paddle(this, 200f, camera.viewportHeight/2,0)
+        paddleRight = Paddle(this,  camera.viewportWidth - 200f, camera.viewportHeight/2,1)
+        deathZoneLeft = DeathZone(world, 60f, screenHeight,1f, camera.viewportHeight/2f)
+        deathZoneRight = DeathZone(world, 60f, screenHeight, camera.viewportWidth - 1f, camera.viewportHeight/2)
+
+        createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight/ 2, - camera.viewportHeight/ 2)
+        createJoint(deathZoneRight.getDeathZoneBody(), paddleRight.getPaddleBody(), camera.viewportHeight/ 2, - camera.viewportHeight/ 2)
     }
 
     private fun createWalls() {
@@ -138,5 +154,18 @@ class GameScreen(mGame: RiggedPong): Screen {
         vertices[4] = Vector2(1f/ PPM/ adjustFactor, 1f/ PPM/ adjustFactor)
         chainShape.createChain(vertices)
         return chainShape
+    }
+
+    private fun createJoint(bodyA: Body, bodyB: Body, upperLimit: Float, lowerLimit: Float): Joint {
+        var pDef = PrismaticJointDef()
+        pDef.bodyA = bodyA
+        pDef.bodyB = bodyB
+        // no colliding between two bodies
+        pDef.collideConnected = false
+        pDef.enableLimit = true
+        pDef.localAnchorA.set(16f/ PPM, 0f)
+        pDef.upperTranslation = upperLimit
+        pDef.lowerTranslation = lowerLimit
+        return world.createJoint(pDef)
     }
 }
