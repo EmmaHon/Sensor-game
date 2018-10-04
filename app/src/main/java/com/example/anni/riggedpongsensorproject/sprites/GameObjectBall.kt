@@ -82,7 +82,7 @@ class GameObjectBall(mGameScreen: GameScreen, xPos: Float, yPos: Float) : Sprite
             }
         } else {
             // when the keys aren't pressed the acceleration will be zero, so
-            // the ship's velocity won't be affected by it
+            // the ball's velocity won't be affected by it
             acceleration.x = when {
                 Gdx.input.isKeyPressed(Input.Keys.LEFT) -> -MAX_ACCELERATION
                 Gdx.input.isKeyPressed(Input.Keys.RIGHT) -> MAX_ACCELERATION
@@ -94,7 +94,7 @@ class GameObjectBall(mGameScreen: GameScreen, xPos: Float, yPos: Float) : Sprite
                 else -> 0f
             }
         }
-        // if there is no acceleration and the ship is moving, let's calculate
+        // if there is no acceleration and the ball is moving, let's calculate
         // an appropriate deceleration
         if (acceleration.len() == 0f && velocity.len() > 0f) {
             // horizontal deceleration
@@ -122,23 +122,23 @@ class GameObjectBall(mGameScreen: GameScreen, xPos: Float, yPos: Float) : Sprite
                 }
             }
         }
-        // modify and check the ship's velocity
+        // modify and check the ball's velocity
         velocity.add(acceleration)
         VectorUtils.adjustByRange(velocity, -MAX_SPEED, MAX_SPEED)
 
-        // modify and check the ship's position, applying the delta parameter
+        // modify and check the ball's position, applying the delta parameter
         position.add(velocity.x * delta, velocity.y * delta)
 
-        // we can't let the ship go off the screen, so here we check the new
-        // ship's position against the stage's dimensions, correcting it if
-        // needed and zeroing the velocity, so that the ship stops flying in the
+        // we can't let the ball go off the screen, so here we check the new
+        // ball's position against the stage's dimensions, correcting it if
+        // needed and zeroing the velocity, so that the ball stops flying in the
         // current direction
         if (VectorUtils.adjustByRangeX(position, 0f, (Gdx.graphics.width - width)))
             velocity.x = 0f
         if (VectorUtils.adjustByRangeY(position, 0f, (Gdx.graphics.height - height)))
             velocity.y = 0f
 
-        // update the ship's actual position
+        // update the ball's actual position
         x = position.x
         y = position.y
     }
