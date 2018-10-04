@@ -2,29 +2,33 @@ package com.example.anni.riggedpongsensorproject
 
 import android.app.Activity
 import com.badlogic.gdx.Game
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-
+import com.example.anni.riggedpongsensorproject.screens.GameScreen
 
 class RiggedPong(activity: Activity) : Game() {
 
-    lateinit var batch: SpriteBatch // only one Spritebatch
-    val mActivity = activity
-    //lateinit var customFont: BitmapFont
     companion object {
-        val PPM = 100
+        const val APP_TITLE = "rigged pong"
+        const val APP_VERSION = 0.1
+        const val APP_WIDTH = 1920f
+        const val APP_HEIGHT = 1080f
+        const val SCALE = 2f
+        const val DENSITY = 1f
+        const val APP_FPS = 60f
+        const val PPM = 32f //Pixel Per Meter
     }
 
+    // batches
+    private lateinit var batch: SpriteBatch
+
+    fun getSpriteBatch(): SpriteBatch {
+        return batch
+    }
+
+    // called when application is created
     override fun create() {
         batch = SpriteBatch()
-        this.setScreen(GameScreen(this, mActivity))
-
+        this.setScreen(GameScreen(this))
     }
 
     override fun render() {
@@ -35,4 +39,5 @@ class RiggedPong(activity: Activity) : Game() {
         this.getScreen().dispose()
         batch.dispose()
     }
+
 }
