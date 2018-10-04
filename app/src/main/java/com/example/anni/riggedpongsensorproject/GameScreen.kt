@@ -7,11 +7,14 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.GlyphLayout
 
 
 class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventListener {
@@ -28,10 +31,12 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
     private val spriteBatch = mGame.batch
     // The camera ensures we can render using our target res of 1080 x 1920(?)
     // pixels no matter what the screen res is
+   //var customFont = BitmapFont()
     private val camera = OrthographicCamera()
     val textureAtlas = TextureAtlas("rp_sprites.atlas")
     private val screenWidth = Resources.getSystem().displayMetrics.widthPixels.toFloat()
     private val screenHeight = Resources.getSystem().displayMetrics.heightPixels.toFloat()
+
 
     // Create our Sensor Manager
     private var SM= activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -61,6 +66,8 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
 
         SM.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
 
+
+
     }
 
     fun getAtlas(): TextureAtlas {
@@ -88,6 +95,7 @@ class GameScreen(mGame: RiggedPong, activity: Activity): Screen, SensorEventList
         renderBackground()
         playerBall.draw(spriteBatch)
         playerBall.moveBall(delta)
+        //customFont.draw(spriteBatch, "123456789.", Gdx.graphics.height.toFloat(), Gdx.graphics.width.toFloat())
         game.batch.end()
     }
 

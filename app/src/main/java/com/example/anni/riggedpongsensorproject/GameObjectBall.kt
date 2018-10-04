@@ -23,9 +23,8 @@ class GameObjectBall(mWorld: World, mGameScreen: GameScreen) : Sprite() {
     private val ballTextureRegion = gameScreen.getAtlas().findRegion("RP_Asset_Ball")
     private val ballTextureHeight = ballTextureRegion.originalHeight.toFloat()
     private val ballTextureWidth = ballTextureRegion.originalWidth.toFloat()
-    private var ballStand = TextureRegion()
     private val MAX_SPEED = 240f
-    private val MAX_ACCELERATION = 10f
+    private val MAX_ACCELERATION = 30f
     private val MAX_DECELERATION = MAX_ACCELERATION / 2
     private val position = Vector2() //ball position
     private val velocity = Vector2()
@@ -78,18 +77,18 @@ class GameObjectBall(mWorld: World, mGameScreen: GameScreen) : Sprite() {
             acceleration.set(Gdx.input.getAccelerometerY(), Gdx.input.getAccelerometerX());
 
             // set the acceleration bounds
-            VectorUtils.adjustByRange(acceleration, -2f, 2f);
+            VectorUtils.adjustByRange(acceleration, -5f, 5f);
 
             // set the input deadzone
             if (!VectorUtils.adjustDeadzone(acceleration, 1f, 0f)) {
                 // we're out of the deadzone, so let's adjust the acceleration
                 // (2 is 100% of the max acceleration)
-                acceleration.x = (acceleration.x / 2 * MAX_ACCELERATION);
-                acceleration.y = (-acceleration.y / 2 * MAX_ACCELERATION);
+                acceleration.x = (acceleration.x / 5 * MAX_ACCELERATION);
+                acceleration.y = (-acceleration.y / 5 * MAX_ACCELERATION);
             }
         } else {
             // when the keys aren't pressed the acceleration will be zero, so
-            // the ship's velocity won't be affected by it
+            // the ball's velocity won't be affected by it
             acceleration.x = if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
                 -MAX_ACCELERATION
             else
@@ -99,7 +98,7 @@ class GameObjectBall(mWorld: World, mGameScreen: GameScreen) : Sprite() {
             else
                 if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) -MAX_ACCELERATION else 0f
         }
-        // if there is no acceleration and the ship is moving, let's calculate
+        // if there is no acceleration and the ball is moving, let's calculate
         // an appropriate deceleration
         if (acceleration.len() == 0f && velocity.len() > 0f) {
             // horizontal deceleration
@@ -127,27 +126,26 @@ class GameObjectBall(mWorld: World, mGameScreen: GameScreen) : Sprite() {
                 }
             }
         }
-        // modify and check the ship's velocity
+        // modify and check the ball's velocity
         velocity.add(acceleration);
         VectorUtils.adjustByRange(velocity, -MAX_SPEED, MAX_SPEED);
 
-        // modify and check the ship's position, applying the delta parameter
+        // modify and check the ball's position, applying the delta parameter
         position.add(velocity.x * delta, velocity.y * delta);
 
-        // we can't let the ship go off the screen, so here we check the new
-        // ship's position against the stage's dimensions, correcting it if
-        // needed and zeroing the velocity, so that the ship stops flying in the
+        // we can't let the ball go off the screen, so here we check the new
+        // position against the stage's dimensions, correcting it if
+        // needed and zeroing the velocity, so that the ball stops flying in the
         // current direction
         if (VectorUtils.adjustByRangeX(position, 0f, (Gdx.graphics.getWidth() - getWidth())))
             velocity.x = 0f;
         if (VectorUtils.adjustByRangeY(position, 0f, (Gdx.graphics.getHeight() - getHeight())))
             velocity.y = 0f;
 
-        // update the ship's actual position
+        // update the ball's actual position
         setX(position.x);
         setY(position.y);
     }
-
     override fun draw(batch: Batch) {
         super.draw(batch)
     }
