@@ -1,13 +1,9 @@
 package com.example.anni.riggedpongsensorproject.sprites
 
-import android.support.constraint.solver.widgets.Analyzer.setPosition
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.Input.Keys.G
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.example.anni.riggedpongsensorproject.screens.GameScreen
@@ -86,7 +82,7 @@ class GameObjectBall(gameScreen: GameScreen, camera: OrthographicCamera) {
             // inverted axis because the game is displayed in landscape mode
             acceleration.set(Gdx.input.accelerometerY, Gdx.input.accelerometerX)
             // set the acceleration bounds
-            VectorUtils.adjustByRange(acceleration, -2f, 2f)
+            //VectorUtils.adjustByRange(acceleration, -2f, 2f)
 
             // set the input deadzone
             if (!VectorUtils.adjustDeadzone(acceleration, 1f, 0f)) {
@@ -98,7 +94,7 @@ class GameObjectBall(gameScreen: GameScreen, camera: OrthographicCamera) {
         } else {
             // when the keys aren't pressed the acceleration will be zero, so
             // the ball's velocity won't be affected by it
-            acceleration.x = when {
+        /*    acceleration.x = when {
                 Gdx.input.isKeyPressed(Input.Keys.LEFT) -> -MAX_ACCELERATION
                 Gdx.input.isKeyPressed(Input.Keys.RIGHT) -> MAX_ACCELERATION
                 else -> 0f
@@ -107,7 +103,7 @@ class GameObjectBall(gameScreen: GameScreen, camera: OrthographicCamera) {
                 Gdx.input.isKeyPressed(Input.Keys.UP) -> MAX_ACCELERATION
                 Gdx.input.isKeyPressed(Input.Keys.DOWN) -> -MAX_ACCELERATION
                 else -> 0f
-            }
+            }*/
         }
         // if there is no acceleration and the ball is moving, let's calculate
         // an appropriate deceleration
@@ -154,9 +150,10 @@ class GameObjectBall(gameScreen: GameScreen, camera: OrthographicCamera) {
             velocity.y = 0f
 
         // // update the ball's actual position
-        ballSprite.x = position.x
-        ballSprite.y = position.y
+        ballSprite.setPosition(
+                (b2bodyBall.position.x * PPM * SCALE) - ballSprite.width/2f,
+                (b2bodyBall.position.y * PPM * SCALE)- ballSprite.height/2f)
         // update position of the box2dBody
-        getBallBody().setTransform((position.x)/ PPM/ SCALE, position.y/PPM/ SCALE, getBallBody().angle)
+        b2bodyBall.setTransform((position.x)/ PPM/ SCALE,position.y/PPM/ SCALE, b2bodyBall.angle)
     }
 }

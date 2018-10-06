@@ -57,24 +57,13 @@ class GameScreen(mGame: RiggedPong): Screen {
         return textureAtlas
     }
 
-    private fun setObjectPositions() {
-        playerBall.getBallSprite().setPosition(
-                (playerBall.getBallBody().position.x * PPM * SCALE) - playerBall.getBallSprite().width/2f,
-                (playerBall.getBallBody().position.y * PPM * SCALE)- playerBall.getBallSprite().height/2f)
-        paddleLeft.getPaddleSprite().setPosition(
-                (paddleLeft.getPaddleBody().position.x * PPM * SCALE) - paddleLeft.getPaddleSprite().width/2f,
-                (paddleLeft.getPaddleBody().position.y * PPM * SCALE)- paddleLeft.getPaddleSprite().height/2f)
-        paddleRight.getPaddleSprite().setPosition(
-                (paddleRight.getPaddleBody().position.x * PPM * SCALE) - paddleRight.getPaddleSprite().width/2f,
-                (paddleRight.getPaddleBody().position.y * PPM * SCALE)- paddleRight.getPaddleSprite().height/2f)
-    }
     fun update(delta: Float) {
         // advance the world by the amount of time that has elapsed
         world.step(1/APP_FPS, 6, 2)
-        setObjectPositions()
         //get touch position - move paddle, for testing only
         // move paddle only in the assigned area
-        //playerBall.moveBall(delta)
+        //setObjectPositions()
+        playerBall.moveBall(delta)
     /*    if (Gdx.input.isTouched) {
             var touchPositionToWorld = -(Gdx.input.y - camera.viewportHeight) / PPM
             var touchLerp = paddleLeft.getPaddleBody().position.y + (touchPositionToWorld - paddleLeft.getPaddleBody().position.y) * .2f
@@ -113,11 +102,11 @@ class GameScreen(mGame: RiggedPong): Screen {
     override fun render(delta: Float) {
         update(delta)
         batch.begin()
-        //renderBackground()
         if (drawSprite) {
+            renderBackground()
+            renderBats()
             batch.draw(playerBall.getBallSprite(), playerBall.getBallSprite().x,
                        playerBall.getBallSprite().y)
-            renderBats()
         }
         batch.end()
         b2Debug.render(world, camera.combined.cpy().scl(PPM))
@@ -143,6 +132,18 @@ class GameScreen(mGame: RiggedPong): Screen {
     }
 
     // private functions
+    private fun setObjectPositions() {
+        playerBall.getBallSprite().setPosition(
+                (playerBall.getBallBody().position.x * PPM * SCALE) - playerBall.getBallSprite().width/2f,
+                (playerBall.getBallBody().position.y * PPM * SCALE)- playerBall.getBallSprite().height/2f)
+        paddleLeft.getPaddleSprite().setPosition(
+                (paddleLeft.getPaddleBody().position.x * PPM * SCALE) - paddleLeft.getPaddleSprite().width/2f,
+                (paddleLeft.getPaddleBody().position.y * PPM * SCALE)- paddleLeft.getPaddleSprite().height/2f)
+        paddleRight.getPaddleSprite().setPosition(
+                (paddleRight.getPaddleBody().position.x * PPM * SCALE) - paddleRight.getPaddleSprite().width/2f,
+                (paddleRight.getPaddleBody().position.y * PPM * SCALE)- paddleRight.getPaddleSprite().height/2f)
+    }
+
     private fun renderBackground() {
         val backgroundTexture = textureAtlas.findRegion("RP_Asset_Play_Area")
         batch.draw(backgroundTexture, 0f, 0f, screenWidth, screenHeight)
@@ -164,10 +165,10 @@ class GameScreen(mGame: RiggedPong): Screen {
         deathZoneLeft = DeathZone(world, 60f, screenHeight,1f, camera.viewportHeight/2f)
         deathZoneRight = DeathZone(world, 60f, screenHeight, camera.viewportWidth - 1f, camera.viewportHeight/2)
         // Joint between paddle and deathZone
-     /*   createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight/ 2,
+        createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight/ 2,
                 - camera.viewportHeight/ 2,  Vector2(100f/ PPM, 0f), Vector2(0f, 0f))
         createJoint(deathZoneRight.getDeathZoneBody(), paddleRight.getPaddleBody(), camera.viewportHeight/ 2,
-                - camera.viewportHeight/ 2, Vector2(-100f/ PPM, 0f), Vector2(0f, 0f))*/
+                - camera.viewportHeight/ 2, Vector2(-100f/ PPM, 0f), Vector2(0f, 0f))
         // player
         playerBall = GameObjectBall(this, camera)
     }
