@@ -13,9 +13,9 @@ import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
 
-class GameObjectBall(gameScreen: GameScreen, camera: OrthographicCamera) {
+class GameObjectBall(gameScreen: GameScreen) {
 
-    private val cameraOrtho = camera
+    private val camera = gameScreen.getCamera()
     private val world = gameScreen.getWorld()
     private lateinit var b2bodyBall: Body
     // sprite
@@ -45,8 +45,8 @@ class GameObjectBall(gameScreen: GameScreen, camera: OrthographicCamera) {
 
     private fun setupBallObject() {
         // position sprite the center of the screen
-        ballSprite.setPosition(cameraOrtho.viewportWidth/2f - ballSprite.width/2f,
-                               cameraOrtho.viewportHeight/2f - ballSprite.height/2f)
+        ballSprite.setPosition(camera.viewportWidth/2f - ballSprite.width/2f,
+                               camera.viewportHeight/2f - ballSprite.height/2f)
         createBallBody(world, ballSprite.x + ballSprite.width/2f, ballSprite.y + ballSprite.height/2f,
                        ballRadius, 0x2, 0x1, 0)
     }

@@ -53,6 +53,10 @@ class GameScreen(mGame: RiggedPong): Screen {
         return world
     }
 
+    fun getCamera(): OrthographicCamera {
+        return camera
+    }
+
     fun getAtlasObjects(): TextureAtlas {
         return textureAtlas
     }
@@ -60,17 +64,10 @@ class GameScreen(mGame: RiggedPong): Screen {
     fun update(delta: Float) {
         // advance the world by the amount of time that has elapsed
         world.step(1/APP_FPS, 6, 2)
-        //get touch position - move paddle, for testing only
-        // move paddle only in the assigned area
         //setObjectPositions
         playerBall.moveBall(delta)
-    /*    if (Gdx.input.isTouched) {
-            var touchPositionToWorld = -(Gdx.input.y - camera.viewportHeight) / PPM
-            var touchLerp = paddleLeft.getPaddleBody().position.y + (touchPositionToWorld - paddleLeft.getPaddleBody().position.y) * .2f
-            if (touchLerp * PPM < camera.viewportHeight - 20 && touchLerp * PPM > 20) {
-                paddleLeft.getPaddleBody().setTransform(paddleLeft.getPaddleBody().position.x, touchLerp, paddleLeft.getPaddleBody().angle)
-            }
-        }*/
+        paddleLeft.movePaddle(delta)
+        paddleRight.movePaddle(delta)
         //clear the screen
         Gdx.gl.glClearColor(0.25f, 0.25f, 0.25f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -160,17 +157,17 @@ class GameScreen(mGame: RiggedPong): Screen {
         createWalls()
         // paddles
         paddleLeft = Paddle(this, 135f, camera.viewportHeight/2,0)
-        paddleRight = Paddle(this,  camera.viewportWidth - 135f, camera.viewportHeight/2,1)
+        paddleRight = Paddle(this,  camera.viewportWidth - 135f,camera.viewportHeight/2f,1)
         // deathZones
         deathZoneLeft = DeathZone(world, 160f, camera.viewportHeight - 200f,1f, camera.viewportHeight/2f)
         deathZoneRight = DeathZone(world, 160f, camera.viewportHeight - 200f, camera.viewportWidth - 1f, camera.viewportHeight/2)
         // Joint between paddle and deathZone
         createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight/ 2,
-                - camera.viewportHeight/ 2,  Vector2(52f/ PPM, 0f), Vector2(0f, 0f))
+                - camera.viewportHeight/ 2,  Vector2(66f/ PPM, 0f), Vector2(0f, 0f))
         createJoint(deathZoneRight.getDeathZoneBody(), paddleRight.getPaddleBody(), camera.viewportHeight/ 2,
-                - camera.viewportHeight/ 2, Vector2(-52f/ PPM, 0f), Vector2(0f, 0f))
+                - camera.viewportHeight/ 2, Vector2(-66f/ PPM, 0f), Vector2(0f, 0f))
         // player
-        playerBall = GameObjectBall(this, camera)
+        playerBall = GameObjectBall(this)
     }
 
     private fun createWalls() {

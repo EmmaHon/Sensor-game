@@ -1,24 +1,23 @@
 package com.example.anni.riggedpongsensorproject.sprites
 
-import android.graphics.Paint
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.physics.box2d.*
-import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
 import com.example.anni.riggedpongsensorproject.screens.GameScreen
+import kotlin.math.sin
 
 class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
 
     private val world = gameScreen.getWorld()
+    private val camera = gameScreen.getCamera()
     private val screenSide = side
     private lateinit var b2bodyPaddle: Body
-    // textures
     private val paddleSprite = Sprite(gameScreen.getAtlasObjects().findRegion("RP_Asset_Bat_LEFT"))
     private val paddleStartX = xPos
     private val paddleStartY = yPos
+    private var numberOfTicks = 0
 
     init {
         setupPaddle()
@@ -33,7 +32,6 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
     }
 
     private fun setupPaddle() {
-        // if time, find a better solution to get the sprite to it's correct position
         paddleSprite.setPosition(paddleStartX - paddleSprite.width/2f,
                                  paddleStartY - paddleSprite.height/2f)
         if (screenSide == 1) {
@@ -67,5 +65,14 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
         paddleShape.dispose()
     }
 
-    private fun movePaddle() {}
+    fun movePaddle(delta: Float) {
+        // up-down paddle movement with sinusoidal motion
+        // TODO: random speeds (at a specific range)
+        numberOfTicks++
+        val maxTop = camera.viewportHeight - 110f
+        val maxDown = 300f
+        var speedY = 40f
+        paddleSprite.y = (maxDown * sin(numberOfTicks * 0.5f * Math.PI/ speedY).toFloat()) + maxTop
+        b2bodyPaddle.setTransform(b2bodyPaddle.position.x,(paddleSprite.y + paddleSprite.height/2f)/ PPM/ SCALE, b2bodyPaddle.angle)
+    }
 }
