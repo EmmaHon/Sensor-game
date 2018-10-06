@@ -38,6 +38,5 @@ class StartMenuFragment: Fragment() {
     }
 
     private fun launchLeaderboardFragment() {
-
     }
 }

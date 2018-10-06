@@ -76,7 +76,7 @@ class GameObjectBall(gameScreen: GameScreen, camera: OrthographicCamera) {
         fDef.filter.groupIndex = gIndex
         b2bodyBall.createFixture(fDef)
         roundShape.dispose()
-       // return b2body
+        // return b2body
     }
 
     fun moveBall(delta: Float) {
@@ -96,8 +96,8 @@ class GameObjectBall(gameScreen: GameScreen, camera: OrthographicCamera) {
                 acceleration.y = (-acceleration.y / 2 * MAX_ACCELERATION)
             }
         } else {
-       /*     // when the keys aren't pressed the acceleration will be zero, so
-            // the ship's velocity won't be affected by it
+            // when the keys aren't pressed the acceleration will be zero, so
+            // the ball's velocity won't be affected by it
             acceleration.x = when {
                 Gdx.input.isKeyPressed(Input.Keys.LEFT) -> -MAX_ACCELERATION
                 Gdx.input.isKeyPressed(Input.Keys.RIGHT) -> MAX_ACCELERATION
@@ -107,9 +107,9 @@ class GameObjectBall(gameScreen: GameScreen, camera: OrthographicCamera) {
                 Gdx.input.isKeyPressed(Input.Keys.UP) -> MAX_ACCELERATION
                 Gdx.input.isKeyPressed(Input.Keys.DOWN) -> -MAX_ACCELERATION
                 else -> 0f
-            }*/
+            }
         }
-        // if there is no acceleration and the ship is moving, let's calculate
+        // if there is no acceleration and the ball is moving, let's calculate
         // an appropriate deceleration
         if (acceleration.len() == 0f && velocity.len() > 0f) {
             // horizontal deceleration
@@ -137,23 +137,23 @@ class GameObjectBall(gameScreen: GameScreen, camera: OrthographicCamera) {
                 }
             }
         }
-        // modify and check the ship's velocity
+        // modify and check the ball's velocity
         velocity.add(acceleration)
         VectorUtils.adjustByRange(velocity, -MAX_SPEED, MAX_SPEED)
 
-        // modify and check the ship's position, applying the delta parameter
+        // modify and check the ball's position, applying the delta parameter
         position.add(velocity.x * delta, velocity.y * delta)
         this.getBallBody().position.add((velocity.x * delta)/ PPM, (velocity.y * delta)/ PPM)
-        // we can't let the ship go off the screen, so here we check the new
-        // ship's position against the stage's dimensions, correcting it if
-        // needed and zeroing the velocity, so that the ship stops flying in the
+        // we can't let the ball go off the screen, so here we check the new
+        // ball's position against the stage's dimensions, correcting it if
+        // needed and zeroing the velocity, so that the ball stops flying in the
         // current direction
         if (VectorUtils.adjustByRangeX(position, 0f, (Gdx.graphics.width - ballSprite.width)))
             velocity.x = 0f
         if (VectorUtils.adjustByRangeY(position, 0f, (Gdx.graphics.height -ballSprite.height)))
             velocity.y = 0f
 
-        // update actual position of player sprite
+        // // update the ball's actual position
         ballSprite.x = position.x
         ballSprite.y = position.y
         // update position of the box2dBody
