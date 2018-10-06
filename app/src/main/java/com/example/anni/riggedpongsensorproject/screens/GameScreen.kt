@@ -62,7 +62,7 @@ class GameScreen(mGame: RiggedPong): Screen {
         world.step(1/APP_FPS, 6, 2)
         //get touch position - move paddle, for testing only
         // move paddle only in the assigned area
-        //setObjectPositions()
+        //setObjectPositions
         playerBall.moveBall(delta)
     /*    if (Gdx.input.isTouched) {
             var touchPositionToWorld = -(Gdx.input.y - camera.viewportHeight) / PPM
@@ -159,16 +159,16 @@ class GameScreen(mGame: RiggedPong): Screen {
     private fun setupGameArea() {
         createWalls()
         // paddles
-        paddleLeft = Paddle(this, 200f, camera.viewportHeight/2,0)
-        paddleRight = Paddle(this,  camera.viewportWidth - 200f, camera.viewportHeight/2,1)
+        paddleLeft = Paddle(this, 135f, camera.viewportHeight/2,0)
+        paddleRight = Paddle(this,  camera.viewportWidth - 135f, camera.viewportHeight/2,1)
         // deathZones
-        deathZoneLeft = DeathZone(world, 60f, screenHeight,1f, camera.viewportHeight/2f)
-        deathZoneRight = DeathZone(world, 60f, screenHeight, camera.viewportWidth - 1f, camera.viewportHeight/2)
+        deathZoneLeft = DeathZone(world, 160f, camera.viewportHeight - 200f,1f, camera.viewportHeight/2f)
+        deathZoneRight = DeathZone(world, 160f, camera.viewportHeight - 200f, camera.viewportWidth - 1f, camera.viewportHeight/2)
         // Joint between paddle and deathZone
         createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight/ 2,
-                - camera.viewportHeight/ 2,  Vector2(100f/ PPM, 0f), Vector2(0f, 0f))
+                - camera.viewportHeight/ 2,  Vector2(52f/ PPM, 0f), Vector2(0f, 0f))
         createJoint(deathZoneRight.getDeathZoneBody(), paddleRight.getPaddleBody(), camera.viewportHeight/ 2,
-                - camera.viewportHeight/ 2, Vector2(-100f/ PPM, 0f), Vector2(0f, 0f))
+                - camera.viewportHeight/ 2, Vector2(-52f/ PPM, 0f), Vector2(0f, 0f))
         // player
         playerBall = GameObjectBall(this, camera)
     }
@@ -196,11 +196,11 @@ class GameScreen(mGame: RiggedPong): Screen {
         // create a full "box" along the screen sides
         val vertices = arrayOfNulls<Vector2>(5)
         val adjustFactor = 2f
-        vertices[0] = Vector2(1f/ PPM/ adjustFactor, 1f/ PPM/ adjustFactor)
-        vertices[1] = Vector2(camera.viewportWidth/ PPM/ adjustFactor, 1f/ PPM/ adjustFactor)
-        vertices[2] = Vector2(camera.viewportWidth/ PPM/ adjustFactor, camera.viewportHeight/ PPM/ adjustFactor)
-        vertices[3] = Vector2(1f/ PPM/ adjustFactor, camera.viewportHeight/ PPM/ adjustFactor)
-        vertices[4] = Vector2(1f/ PPM/ adjustFactor, 1f/ PPM/ adjustFactor)
+        vertices[0] = Vector2(20f/ PPM/ adjustFactor, 60f/ PPM/ adjustFactor)
+        vertices[1] = Vector2((camera.viewportWidth -20f)/ PPM/ adjustFactor, 60f/ PPM/ adjustFactor)
+        vertices[2] = Vector2((camera.viewportWidth -20f)/ PPM/ adjustFactor, (camera.viewportHeight -60f)/ PPM/ adjustFactor)
+        vertices[3] = Vector2(20f/ PPM/ adjustFactor, (camera.viewportHeight -60f)/ PPM/ adjustFactor)
+        vertices[4] = Vector2(20f/ PPM/ adjustFactor, 60f/ PPM/ adjustFactor)
         chainShape.createChain(vertices)
         return chainShape
     }
