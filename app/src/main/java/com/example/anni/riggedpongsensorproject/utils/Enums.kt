@@ -6,3 +6,7 @@ package com.example.anni.riggedpongsensorproject.utils
         WALL(0x04),
         DEATH(0x06)
     }
+
+    enum class GameState {
+        COUNTDOWN, PLAY, GAME_OVER
+    }

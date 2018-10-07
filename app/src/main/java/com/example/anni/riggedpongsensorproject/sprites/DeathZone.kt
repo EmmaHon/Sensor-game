@@ -16,14 +16,14 @@ class DeathZone(mWorld: World, width: Float, height: Float, xPos: Float, yPos: F
     private val zoneY = yPos
 
     init {
-        createDeathZone(ObjectBits.DEATH.bits, ObjectBits.BALL.bits, 0)
+        createDeathZone()
     }
 
     fun getDeathZoneBody(): Body {
         return body
     }
 
-    private fun createDeathZone(cBits: Short, mBits: Short, gIndex: Short) {
+    private fun createDeathZone() {
         val bDef = BodyDef()
         bDef.type = BodyDef.BodyType.StaticBody
         bDef.position.set(zoneX/ RiggedPong.PPM / SCALE, zoneY/ RiggedPong.PPM / SCALE)
@@ -33,9 +33,6 @@ class DeathZone(mWorld: World, width: Float, height: Float, xPos: Float, yPos: F
         var fDef = FixtureDef()
         fDef.shape = deathZoneShape
         fDef.density = 0f
-        fDef.filter.categoryBits = cBits // is a property
-        fDef.filter.maskBits = mBits // collides with a property
-        fDef.filter.groupIndex = gIndex
         body.createFixture(fDef)
         deathZoneShape.dispose()
     }

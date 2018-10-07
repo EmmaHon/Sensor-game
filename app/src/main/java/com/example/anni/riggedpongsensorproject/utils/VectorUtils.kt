@@ -2,7 +2,6 @@ package com.example.anni.riggedpongsensorproject.utils
 
 import com.badlogic.gdx.math.Vector2
 
-
 object VectorUtils {
 
     /**

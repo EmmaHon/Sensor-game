@@ -19,6 +19,7 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
     private val paddleStartX = xPos
     private val paddleStartY = yPos
     private var numberOfTicks = 0
+    private var isMoving = true
 
     init {
         setupPaddle()
@@ -30,6 +31,23 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
 
     fun getPaddleBody(): Body {
         return b2bodyPaddle
+    }
+
+    fun movePaddle(delta: Float) {
+        // up-down paddle movement with sinusoidal motion
+        // TODO: random speeds (at a specific range) and direction
+        if (isMoving) {
+            numberOfTicks++
+            val maxTop = camera.viewportHeight - 110f
+            val maxDown = 300f
+            var speedY = 70f
+            paddleSprite.y = (maxDown * sin(numberOfTicks * 0.5f * Math.PI/ speedY).toFloat()) + maxTop
+            b2bodyPaddle.setTransform(b2bodyPaddle.position.x,(paddleSprite.y + paddleSprite.height/2f)/ PPM/ SCALE, b2bodyPaddle.angle)
+        }
+    }
+
+    fun setIsMoving(moving: Boolean) {
+        isMoving = moving
     }
 
     private fun setupPaddle() {
@@ -65,16 +83,5 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
         fDef.filter.groupIndex = gIndex
         b2bodyPaddle.createFixture(fDef)
         paddleShape.dispose()
-    }
-
-    fun movePaddle(delta: Float) {
-        // up-down paddle movement with sinusoidal motion
-        // TODO: random speeds (at a specific range) and direction
-        numberOfTicks++
-        val maxTop = camera.viewportHeight - 110f
-        val maxDown = 300f
-        var speedY = 70f
-        paddleSprite.y = (maxDown * sin(numberOfTicks * 0.5f * Math.PI/ speedY).toFloat()) + maxTop
-        b2bodyPaddle.setTransform(b2bodyPaddle.position.x,(paddleSprite.y + paddleSprite.height/2f)/ PPM/ SCALE, b2bodyPaddle.angle)
     }
 }

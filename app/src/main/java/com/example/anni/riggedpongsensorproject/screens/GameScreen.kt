@@ -2,11 +2,13 @@ package com.example.anni.riggedpongsensorproject.screens
 
 import android.content.res.Resources
 import android.util.Log
+import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
@@ -19,38 +21,34 @@ import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
 import com.example.anni.riggedpongsensorproject.sprites.DeathZone
 import com.example.anni.riggedpongsensorproject.sprites.Paddle
+import com.example.anni.riggedpongsensorproject.utils.GameState
 
-class GameScreen(mGame: RiggedPong): Screen {
+class GameScreen(pongGame: RiggedPong): Screen {
 
-    // batch
-    private val batch = mGame.getSpriteBatch()
-    // textures
+    private val game = pongGame
+    private val batch = pongGame.getSpriteBatch()
     private val textureAtlas = TextureAtlas("rp_sprites.atlas")
-    // screen size
     private val screenWidth = Resources.getSystem().displayMetrics.widthPixels.toFloat()
     private val screenHeight = Resources.getSystem().displayMetrics.heightPixels.toFloat()
-    // camera
     private val camera = OrthographicCamera(screenWidth, screenHeight)
     // box2d
     private lateinit var world: World
     private val b2Debug = Box2DDebugRenderer() // render body objects for debugging
-    // player
     private lateinit var playerBall: GameObjectBall
-    // objects
     private lateinit var paddleLeft: Paddle
     private lateinit var paddleRight: Paddle
     private lateinit var deathZoneLeft: DeathZone
     private lateinit var deathZoneRight: DeathZone
     private var score = 0
-    private var round = 3
-
-    var drawSprite = true
+    private var rounds = 3
+    private var gameState = GameState.PLAY
+    private var startTime = 0f
 
     // what needs to be in memory, otherwise move to show-method
     init {
         // sets a viewport according to given width and height
         camera.setToOrtho(false, screenWidth, screenHeight)
-        Log.d("DEBUG1", "ROUNDS: $round")
+        Log.d("DEBUG1", "ROUNDS: $rounds")
     }
 
     // public functions
@@ -66,6 +64,11 @@ class GameScreen(mGame: RiggedPong): Screen {
         return textureAtlas
     }
 
+    fun setGameState(state: GameState) {
+        startTime = 0f
+        gameState = state
+    }
+
     fun update(delta: Float) {
         // advance the world by the amount of time that has elapsed
         world.step(1/APP_FPS, 6, 2)
@@ -79,44 +82,6 @@ class GameScreen(mGame: RiggedPong): Screen {
         //camera.update()
     }
 
-    fun resetPlayArea() {
-
-    }
-
-    fun setOnContactListener() {
-        // collision detection
-        if (world != null) {
-            world.setContactListener(object : ContactListener {
-                override fun beginContact(contact: Contact?) {
-                    val fixA = contact!!.fixtureA.body
-                    val fixB = contact.fixtureB.body
-
-                    // collision with deathzones, decrease rounds here and reset arena
-                    if (fixA == deathZoneLeft.getDeathZoneBody() || fixA == deathZoneRight.getDeathZoneBody()
-                            && fixB == playerBall.getBallBody()) {
-                        Log.d("DEBUG1", "CONTACT with death zone!")
-                        --round
-                        Log.d("DEBUG2", "rounds: $round")
-                        resetPlayArea()
-                    }
-                    // collision with paddles, increase score here
-                    if (fixA == paddleLeft.getPaddleBody() ||  fixA == paddleRight.getPaddleBody()
-                            && fixB == playerBall.getBallBody()) {
-                        Log.d("DEBUG3", "CONTACT with paddle!")
-                        score += 10
-                        Log.d("DEBUG4", "score: $score")
-                    }
-                }
-                override fun endContact(contact: Contact?) {
-                    val fixA = contact!!.fixtureA
-                    val fixB = contact.fixtureB
-                }
-                override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}
-                override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {}
-            })
-        }
-    }
-
     // functions from Screen
     override fun show() {
         world = World(Vector2(0f,0f), true)
@@ -127,15 +92,21 @@ class GameScreen(mGame: RiggedPong): Screen {
 
     //called ~60 times per second, game logic updates performed here
     override fun render(delta: Float) {
-        update(delta)
-        batch.begin()
-        if (drawSprite) {
-            renderBackground()
-            renderBats()
-            batch.draw(playerBall.getBallSprite(), playerBall.getBallSprite().x,
-                       playerBall.getBallSprite().y)
+        startTime += delta
+        when (gameState) {
+            GameState.COUNTDOWN -> {
+                renderAll()
+                if (startTime > 3)
+                setGameState(GameState.PLAY)
+            }
+            GameState.PLAY -> {
+                update(delta)
+                renderAll()
+            }
+            GameState.GAME_OVER -> {
+                Log.d("DEBUG", "game over!")
+            }
         }
-        batch.end()
         b2Debug.render(world, camera.combined.cpy().scl(PPM))
     }
 
@@ -159,16 +130,88 @@ class GameScreen(mGame: RiggedPong): Screen {
     }
 
     // private functions
-    private fun setObjectPositions() {
-        playerBall.getBallSprite().setPosition(
-                (playerBall.getBallBody().position.x * PPM * SCALE) - playerBall.getBallSprite().width/2f,
-                (playerBall.getBallBody().position.y * PPM * SCALE)- playerBall.getBallSprite().height/2f)
-        paddleLeft.getPaddleSprite().setPosition(
-                (paddleLeft.getPaddleBody().position.x * PPM * SCALE) - paddleLeft.getPaddleSprite().width/2f,
-                (paddleLeft.getPaddleBody().position.y * PPM * SCALE)- paddleLeft.getPaddleSprite().height/2f)
-        paddleRight.getPaddleSprite().setPosition(
-                (paddleRight.getPaddleBody().position.x * PPM * SCALE) - paddleRight.getPaddleSprite().width/2f,
-                (paddleRight.getPaddleBody().position.y * PPM * SCALE)- paddleRight.getPaddleSprite().height/2f)
+    private fun renderRounds() {
+        val roundUITexture1 = Texture(Gdx.files.internal("rp_ui_round.png"))
+        when (rounds) {
+            3 -> {
+                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f - 30f)* SCALE - roundUITexture1.width/2f,
+                        (camera.viewportHeight - 45f) * SCALE)
+                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f)* SCALE - roundUITexture1.width/2f,
+                        (camera.viewportHeight - 45f) * SCALE)
+                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f + 30f)* SCALE - roundUITexture1.width/2f,
+                        (camera.viewportHeight - 45f) * SCALE)
+            }
+            2 -> {
+                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f + 30f)* SCALE - roundUITexture1.width/2f,
+                        (camera.viewportHeight - 45f) * SCALE)
+                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f)* SCALE - roundUITexture1.width/2f,
+                        (camera.viewportHeight - 45f) * SCALE)
+            }
+            1 -> {
+                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f + 30f)* SCALE - roundUITexture1.width/2f,
+                        (camera.viewportHeight - 45f) * SCALE)
+            }
+            else -> {
+                // rounds = 0, no need to render anything
+                Log.d("DEBUG", "no rounds left")
+            }
+        }
+    }
+
+    private fun resetPlayArea() {
+        playerBall.setIsMoving(false)
+        paddleLeft.setIsMoving(false)
+        paddleRight.setIsMoving(false)
+        setObjectPositions()
+        rounds = 3
+        score = 0
+        setGameState(GameState.COUNTDOWN)
+    }
+
+    private fun setOnContactListener() {
+        // collision detection
+        if (world != null) {
+            world.setContactListener(object : ContactListener {
+                override fun beginContact(contact: Contact?) {
+                    val fixA = contact!!.fixtureA.body
+                    val fixB = contact.fixtureB.body
+
+                    // collision with deathzones, decrease rounds here and reset arena
+                    if (fixA == deathZoneLeft.getDeathZoneBody() || fixA == deathZoneRight.getDeathZoneBody()
+                            && fixB == playerBall.getBallBody()) {
+                        --rounds
+                        Log.d("DEBUG2", "rounds: $rounds")
+                        //resetPlayArea()
+                        if (rounds <= 0) {
+                            //setGameState(GameState.GAME_OVER)
+                        }
+                    }
+
+                    // collision with paddles, increase score here
+                    if (fixA == paddleLeft.getPaddleBody() ||  fixA == paddleRight.getPaddleBody()
+                            && fixB == playerBall.getBallBody()) {
+                        score += 10
+                        Log.d("DEBUG4", "score: $score")
+                    }
+                }
+                override fun endContact(contact: Contact?) {
+                    val fixA = contact!!.fixtureA
+                    val fixB = contact.fixtureB
+                }
+                override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}
+                override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {}
+            })
+        }
+    }
+
+    private fun renderAll() {
+        batch.begin()
+        renderBackground()
+        renderBats()
+        batch.draw(playerBall.getBallSprite(), playerBall.getBallSprite().x,
+                playerBall.getBallSprite().y)
+        renderRounds()
+        batch.end()
     }
 
     private fun renderBackground() {
@@ -184,13 +227,13 @@ class GameScreen(mGame: RiggedPong): Screen {
     }
 
     private fun setupGameArea() {
-        createWalls()
+        //createWalls()
         // paddles
         paddleLeft = Paddle(this, 135f, camera.viewportHeight/2,0)
         paddleRight = Paddle(this,  camera.viewportWidth - 135f,camera.viewportHeight/2f,1)
         // deathZones
-        deathZoneLeft = DeathZone(world, 160f, camera.viewportHeight - 200f,1f, camera.viewportHeight/2f)
-        deathZoneRight = DeathZone(world, 160f, camera.viewportHeight - 200f, camera.viewportWidth - 1f, camera.viewportHeight/2)
+        deathZoneLeft = DeathZone(world, 160f, camera.viewportHeight - 270f,1f, camera.viewportHeight/2f)
+        deathZoneRight = DeathZone(world, 160f, camera.viewportHeight - 270f, camera.viewportWidth - 1f, camera.viewportHeight/2)
         // Joint between paddle and deathZone
         createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight/ 2,
                 - camera.viewportHeight/ 2,  Vector2(67f/ PPM, 0f), Vector2(0f, 0f))
@@ -246,5 +289,17 @@ class GameScreen(mGame: RiggedPong): Screen {
         pDef.upperTranslation = upperLimit / PPM
         pDef.lowerTranslation = lowerLimit / PPM
         return world.createJoint(pDef)
+    }
+
+    private fun setObjectPositions() {
+        playerBall.getBallSprite().setPosition(
+                (playerBall.getBallBody().position.x * PPM * SCALE) - playerBall.getBallSprite().width/2f,
+                (playerBall.getBallBody().position.y * PPM * SCALE)- playerBall.getBallSprite().height/2f)
+        paddleLeft.getPaddleSprite().setPosition(
+                (paddleLeft.getPaddleBody().position.x * PPM * SCALE) - paddleLeft.getPaddleSprite().width/2f,
+                (paddleLeft.getPaddleBody().position.y * PPM * SCALE)- paddleLeft.getPaddleSprite().height/2f)
+        paddleRight.getPaddleSprite().setPosition(
+                (paddleRight.getPaddleBody().position.x * PPM * SCALE) - paddleRight.getPaddleSprite().width/2f,
+                (paddleRight.getPaddleBody().position.y * PPM * SCALE)- paddleRight.getPaddleSprite().height/2f)
     }
 }

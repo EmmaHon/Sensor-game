@@ -10,8 +10,6 @@ class RiggedPong(activity: Activity) : Game() {
     companion object {
         const val APP_TITLE = "rigged pong"
         const val APP_VERSION = 0.1
-        const val APP_WIDTH = 1920f
-        const val APP_HEIGHT = 1080f
         const val SCALE = 2f
         const val DENSITY = 1f
         const val APP_FPS = 60f
