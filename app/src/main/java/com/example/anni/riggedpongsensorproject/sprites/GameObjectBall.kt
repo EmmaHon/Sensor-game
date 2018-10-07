@@ -2,7 +2,7 @@ package com.example.anni.riggedpongsensorproject.sprites
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.graphics.OrthographicCamera
+
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
@@ -12,6 +12,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
+import com.example.anni.riggedpongsensorproject.utils.ObjectBits
+import kotlin.experimental.or
 
 class GameObjectBall(gameScreen: GameScreen) {
 
@@ -48,7 +50,8 @@ class GameObjectBall(gameScreen: GameScreen) {
         ballSprite.setPosition(camera.viewportWidth/2f - ballSprite.width/2f,
                                camera.viewportHeight/2f - ballSprite.height/2f)
         createBallBody(world, ballSprite.x + ballSprite.width/2f, ballSprite.y + ballSprite.height/2f,
-                       ballRadius, 0x2, 0x1, 0)
+                       ballRadius, ObjectBits.BALL.bits,ObjectBits.PADDLE.bits or ObjectBits.DEATH.bits or
+                       ObjectBits.WALL.bits, 0)
     }
 
     // create physics body

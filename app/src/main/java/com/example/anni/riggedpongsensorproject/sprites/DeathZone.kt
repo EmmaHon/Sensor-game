@@ -3,6 +3,8 @@ package com.example.anni.riggedpongsensorproject.sprites
 import com.badlogic.gdx.physics.box2d.*
 import com.example.anni.riggedpongsensorproject.RiggedPong
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
+import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
+import com.example.anni.riggedpongsensorproject.utils.ObjectBits
 
 class DeathZone(mWorld: World, width: Float, height: Float, xPos: Float, yPos: Float) {
 
@@ -14,22 +16,27 @@ class DeathZone(mWorld: World, width: Float, height: Float, xPos: Float, yPos: F
     private val zoneY = yPos
 
     init {
-        createDeathZone()
+        createDeathZone(ObjectBits.DEATH.bits, ObjectBits.BALL.bits, 0)
     }
 
     fun getDeathZoneBody(): Body {
         return body
     }
 
-    private fun createDeathZone() {
+    private fun createDeathZone(cBits: Short, mBits: Short, gIndex: Short) {
         val bDef = BodyDef()
         bDef.type = BodyDef.BodyType.StaticBody
-        val adjustFactor1 = 2f
-        bDef.position.set(zoneX/ RiggedPong.PPM / adjustFactor1, zoneY/ RiggedPong.PPM / adjustFactor1)
+        bDef.position.set(zoneX/ RiggedPong.PPM / SCALE, zoneY/ RiggedPong.PPM / SCALE)
         body = world.createBody(bDef)
         val deathZoneShape = PolygonShape()
         deathZoneShape.setAsBox(zoneWidth/ RiggedPong.PPM / 4f, zoneHeight/ RiggedPong.PPM / 4f)
-        body.createFixture(deathZoneShape, DENSITY)
+        var fDef = FixtureDef()
+        fDef.shape = deathZoneShape
+        fDef.density = 0f
+        fDef.filter.categoryBits = cBits // is a property
+        fDef.filter.maskBits = mBits // collides with a property
+        fDef.filter.groupIndex = gIndex
+        body.createFixture(fDef)
         deathZoneShape.dispose()
     }
 }

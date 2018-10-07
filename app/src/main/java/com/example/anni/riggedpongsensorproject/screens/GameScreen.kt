@@ -1,12 +1,14 @@
 package com.example.anni.riggedpongsensorproject.screens
 
 import android.content.res.Resources
+import android.util.Log
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef
@@ -39,6 +41,8 @@ class GameScreen(mGame: RiggedPong): Screen {
     private lateinit var paddleRight: Paddle
     private lateinit var deathZoneLeft: DeathZone
     private lateinit var deathZoneRight: DeathZone
+    private var score = 0
+    private var round = 3
 
     var drawSprite = true
 
@@ -46,6 +50,7 @@ class GameScreen(mGame: RiggedPong): Screen {
     init {
         // sets a viewport according to given width and height
         camera.setToOrtho(false, screenWidth, screenHeight)
+        Log.d("DEBUG1", "ROUNDS: $round")
     }
 
     // public functions
@@ -74,24 +79,49 @@ class GameScreen(mGame: RiggedPong): Screen {
         //camera.update()
     }
 
+    fun resetPlayArea() {
+
+    }
+
+    fun setOnContactListener() {
+        // collision detection
+        if (world != null) {
+            world.setContactListener(object : ContactListener {
+                override fun beginContact(contact: Contact?) {
+                    val fixA = contact!!.fixtureA.body
+                    val fixB = contact.fixtureB.body
+
+                    // collision with deathzones, decrease rounds here and reset arena
+                    if (fixA == deathZoneLeft.getDeathZoneBody() || fixA == deathZoneRight.getDeathZoneBody()
+                            && fixB == playerBall.getBallBody()) {
+                        Log.d("DEBUG1", "CONTACT with death zone!")
+                        --round
+                        Log.d("DEBUG2", "rounds: $round")
+                        resetPlayArea()
+                    }
+                    // collision with paddles, increase score here
+                    if (fixA == paddleLeft.getPaddleBody() ||  fixA == paddleRight.getPaddleBody()
+                            && fixB == playerBall.getBallBody()) {
+                        Log.d("DEBUG3", "CONTACT with paddle!")
+                        score += 10
+                        Log.d("DEBUG4", "score: $score")
+                    }
+                }
+                override fun endContact(contact: Contact?) {
+                    val fixA = contact!!.fixtureA
+                    val fixB = contact.fixtureB
+                }
+                override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}
+                override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {}
+            })
+        }
+    }
+
     // functions from Screen
     override fun show() {
         world = World(Vector2(0f,0f), true)
-        // collision detection
-   /*     world.setContactListener(object : ContactListener {
-            override fun endContact(contact: Contact?) {}
-            override fun beginContact(contact: Contact?) {
-                // Check to see if the collision is between the second sprite and the bottom of the screen
-                // If so apply a random amount of upward force to both objects
-                if((contact!!.fixtureA.body == playerBall.getBallBody() && contact.fixtureB.body == paddleLeft.getPaddleBody()) ||
-                        (contact.fixtureA.body == playerBall.getBallBody() && contact.fixtureB.body == paddleRight.getPaddleBody())) {
-                    playerBall.getBallBody().applyForceToCenter(0f, MathUtils.random(20,50).toFloat(),true)
-                }
-            }
-            override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}
-            override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {}
-        })*/
         setupGameArea()
+        setOnContactListener()
         batch.projectionMatrix = camera.combined
     }
 
@@ -163,9 +193,9 @@ class GameScreen(mGame: RiggedPong): Screen {
         deathZoneRight = DeathZone(world, 160f, camera.viewportHeight - 200f, camera.viewportWidth - 1f, camera.viewportHeight/2)
         // Joint between paddle and deathZone
         createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight/ 2,
-                - camera.viewportHeight/ 2,  Vector2(66f/ PPM, 0f), Vector2(0f, 0f))
+                - camera.viewportHeight/ 2,  Vector2(67f/ PPM, 0f), Vector2(0f, 0f))
         createJoint(deathZoneRight.getDeathZoneBody(), paddleRight.getPaddleBody(), camera.viewportHeight/ 2,
-                - camera.viewportHeight/ 2, Vector2(-66f/ PPM, 0f), Vector2(0f, 0f))
+                - camera.viewportHeight/ 2, Vector2(-67f/ PPM, 0f), Vector2(0f, 0f))
         // player
         playerBall = GameObjectBall(this)
     }

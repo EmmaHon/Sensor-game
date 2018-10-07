@@ -6,6 +6,7 @@ import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
 import com.example.anni.riggedpongsensorproject.screens.GameScreen
+import com.example.anni.riggedpongsensorproject.utils.ObjectBits
 import kotlin.math.sin
 
 class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
@@ -38,7 +39,8 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
             paddleSprite.setFlip(true, true)
         }
         createPaddleBody(world, paddleSprite.x + paddleSprite.width/2f,
-                        paddleSprite.y + paddleSprite.height/2f, 0x1, 0x2, 0)
+                        paddleSprite.y + paddleSprite.height/2f, ObjectBits.PADDLE.bits,
+                        ObjectBits.BALL.bits, 0)
     }
 
     private fun createPaddleBody(world: World, xPos: Float, yPos: Float,
@@ -54,7 +56,7 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
         val paddleShape = PolygonShape()
         paddleShape.setAsBox(paddleSprite.width/ PPM/ 4f, paddleSprite.height/ PPM/ 4f)
         //paddleShape.setAsBox(paddleSprite.width/ 2f, paddleSprite.height/ 2f)
-        val fDef = FixtureDef()
+        var fDef = FixtureDef()
         fDef.shape = paddleShape
         fDef.density = DENSITY
         // collision properties
@@ -67,11 +69,11 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
 
     fun movePaddle(delta: Float) {
         // up-down paddle movement with sinusoidal motion
-        // TODO: random speeds (at a specific range)
+        // TODO: random speeds (at a specific range) and direction
         numberOfTicks++
         val maxTop = camera.viewportHeight - 110f
         val maxDown = 300f
-        var speedY = 40f
+        var speedY = 70f
         paddleSprite.y = (maxDown * sin(numberOfTicks * 0.5f * Math.PI/ speedY).toFloat()) + maxTop
         b2bodyPaddle.setTransform(b2bodyPaddle.position.x,(paddleSprite.y + paddleSprite.height/2f)/ PPM/ SCALE, b2bodyPaddle.angle)
     }
