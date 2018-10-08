@@ -9,23 +9,29 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef
+import com.example.anni.riggedpongsensorproject.R
 import com.example.anni.riggedpongsensorproject.sprites.GameObjectBall
 import com.example.anni.riggedpongsensorproject.RiggedPong
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_FPS
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
+import com.example.anni.riggedpongsensorproject.fragments.StartMenuFragment
 import com.example.anni.riggedpongsensorproject.sprites.DeathZone
 import com.example.anni.riggedpongsensorproject.sprites.Paddle
 import com.example.anni.riggedpongsensorproject.utils.GameState
+import com.example.anni.riggedpongsensorproject.utils.VectorUtils
 
-class GameScreen(pongGame: RiggedPong): Screen {
+class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
 
     private val game = pongGame
+    private val font = pongFont
     private val batch = pongGame.getSpriteBatch()
     private val textureAtlas = TextureAtlas("rp_sprites.atlas")
     private val screenWidth = Resources.getSystem().displayMetrics.widthPixels.toFloat()
@@ -43,6 +49,7 @@ class GameScreen(pongGame: RiggedPong): Screen {
     private var rounds = 3
     private var gameState = GameState.PLAY
     private var startTime = 0f
+    lateinit var font22: BitmapFont
 
     // what needs to be in memory, otherwise move to show-method
     init {
@@ -74,12 +81,12 @@ class GameScreen(pongGame: RiggedPong): Screen {
         world.step(1/APP_FPS, 6, 2)
         //setObjectPositions
         playerBall.moveBall(delta)
-        paddleLeft.movePaddle(delta)
-        paddleRight.movePaddle(delta)
+        //paddleLeft.movePaddle(delta)
+        //paddleRight.movePaddle(delta)
         //clear the screen
         Gdx.gl.glClearColor(0.25f, 0.25f, 0.25f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        //camera.update()
+        camera.update()
     }
 
     // functions from Screen
@@ -129,7 +136,6 @@ class GameScreen(pongGame: RiggedPong): Screen {
         textureAtlas.dispose()
     }
 
-    // private functions
     private fun renderRounds() {
         val roundUITexture1 = Texture(Gdx.files.internal("rp_ui_round.png"))
         when (rounds) {
@@ -162,9 +168,6 @@ class GameScreen(pongGame: RiggedPong): Screen {
         playerBall.setIsMoving(false)
         paddleLeft.setIsMoving(false)
         paddleRight.setIsMoving(false)
-        setObjectPositions()
-        rounds = 3
-        score = 0
         setGameState(GameState.COUNTDOWN)
     }
 
@@ -185,18 +188,31 @@ class GameScreen(pongGame: RiggedPong): Screen {
                         if (rounds <= 0) {
                             //setGameState(GameState.GAME_OVER)
                         }
+                    /*    if (VectorUtils.adjustByRangeY(playerBall.position, 0f, paddleLeft.getPaddleSprite().width)) {
+                            //playerBall.velocity.y = 0f
+                            Log.d("DEBUG", "in deathzone range")
+                        }*/
                     }
-
                     // collision with paddles, increase score here
                     if (fixA == paddleLeft.getPaddleBody() ||  fixA == paddleRight.getPaddleBody()
                             && fixB == playerBall.getBallBody()) {
                         score += 10
                         Log.d("DEBUG4", "score: $score")
+                        playerBall.getBallBody().applyForce(100f, 0f, 10f, 0f, true)
+
+                        if (VectorUtils.adjustByRangeY(playerBall.position, 0f, paddleLeft.getPaddleSprite().height)) {
+                            playerBall.getBallBody().setTransform(playerBall.position.x + 10f, playerBall.position.y,
+                                    playerBall.getBallBody().angle)
+                            Log.d("DEBUG", "in paddle range")
+                        }
                     }
                 }
                 override fun endContact(contact: Contact?) {
                     val fixA = contact!!.fixtureA
                     val fixB = contact.fixtureB
+                    if (fixA == paddleLeft.getPaddleBody() ||  fixA == paddleRight.getPaddleBody()
+                            && fixB == playerBall.getBallBody()) {
+                    }
                 }
                 override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}
                 override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {}
@@ -208,9 +224,15 @@ class GameScreen(pongGame: RiggedPong): Screen {
         batch.begin()
         renderBackground()
         renderBats()
+        renderRounds()
+        when {
+            score < 10 -> font.draw(batch, score.toString(), (camera.viewportWidth/2f - 14f) * SCALE,120f)
+            score < 100 -> font.draw(batch, score.toString(), (camera.viewportWidth/2f - 28f) * SCALE,120f)
+            score < 1000 -> font.draw(batch, score.toString(), (camera.viewportWidth/2f - 42f) * SCALE,120f)
+            score < 10000 -> font.draw(batch, score.toString(), (camera.viewportWidth/2f - 56f) * SCALE,120f)
+        }
         batch.draw(playerBall.getBallSprite(), playerBall.getBallSprite().x,
                 playerBall.getBallSprite().y)
-        renderRounds()
         batch.end()
     }
 

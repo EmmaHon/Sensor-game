@@ -2,7 +2,10 @@ package com.example.anni.riggedpongsensorproject
 
 import android.app.Activity
 import com.badlogic.gdx.Game
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.example.anni.riggedpongsensorproject.screens.GameScreen
 
 class RiggedPong(activity: Activity) : Game() {
@@ -12,7 +15,7 @@ class RiggedPong(activity: Activity) : Game() {
         const val APP_VERSION = 0.1
         const val SCALE = 2f
         const val DENSITY = 1f
-        const val APP_FPS = 60f
+        const val APP_FPS = 40f
         const val PPM = 32f //Pixel Per Meter
     }
 
@@ -26,7 +29,8 @@ class RiggedPong(activity: Activity) : Game() {
     // called when application is created
     override fun create() {
         batch = SpriteBatch()
-        this.setScreen(GameScreen(this))
+        val font22 = createFont()
+        this.setScreen(GameScreen(this, font22))
     }
 
     override fun render() {
@@ -38,4 +42,15 @@ class RiggedPong(activity: Activity) : Game() {
         batch.dispose()
     }
 
+    // private functions
+    private fun createFont(): BitmapFont {
+        val fontFile = Gdx.files.internal("pixelite.fnt")
+        val generator = FreeTypeFontGenerator(fontFile)
+        val fontParam = FreeTypeFontGenerator.FreeTypeFontParameter()
+        fontParam.size = 22
+        val font = generator.generateFont(fontParam)
+        font.data.setScale(7f, 7f)
+        generator.dispose()
+        return font
+    }
 }
