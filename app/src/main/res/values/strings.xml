@@ -8,7 +8,7 @@
     <string name="Board">Leaderboard</string>
     <string name="backStart">Start Menu</string>
     <string name="gameOver">Game Over</string>
-    <string name="scoreLabel">150 </string>
+    <string name="scoreLabel">150</string>
     <string name="highScoreLabel">300</string>
     <!---<string name="scoreLabel">Score: %1$s</string>
     <string name="highScoreLabel">High score: %1$s </string> -->
