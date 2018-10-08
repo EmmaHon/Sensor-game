@@ -8,5 +8,5 @@ package com.example.anni.riggedpongsensorproject.utils
     }
 
     enum class GameState {
-        COUNTDOWN, PLAY, GAME_OVER
+        COUNTDOWN, PLAY, GAME_OVER, RESET
     }

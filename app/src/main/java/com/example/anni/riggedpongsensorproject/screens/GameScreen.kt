@@ -93,7 +93,7 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
     // functions from Screen
     override fun show() {
         world = World(Vector2(0f,0f), true)
-        setupGameArea()
+        setupPlayArea()
         setOnContactListener()
         batch.projectionMatrix = camera.combined
     }
@@ -104,12 +104,15 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
         when (gameState) {
             GameState.COUNTDOWN -> {
                 renderAll()
-                if (startTime > 2)
-                setGameState(GameState.PLAY)
+                if (startTime > 2) setGameState(GameState.PLAY)
             }
             GameState.PLAY -> {
                 update(delta)
                 renderAll()
+            }
+            GameState.RESET -> {
+                renderAll()
+                if (startTime > 1) setGameState(GameState.PLAY)
             }
             GameState.GAME_OVER -> {
                 Log.d("DEBUG", "game over!")
@@ -168,7 +171,7 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
     private fun resetPlayArea() {
         playerBall.setCenterDimensions()
         resetObjectPositions()
-        setGameState(GameState.COUNTDOWN)
+        setGameState(GameState.RESET)
     }
 
     private fun setOnContactListener() {
@@ -227,6 +230,10 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
             score < 1000 -> font.draw(batch, score.toString(), (camera.viewportWidth/2f - 42f) * SCALE,120f)
             score < 10000 -> font.draw(batch, score.toString(), (camera.viewportWidth/2f - 56f) * SCALE,120f)
         }
+        if (gameState == GameState.COUNTDOWN && startTime.toInt() <= 2) {
+            val countDown = 3 - startTime.toInt()
+            font.draw(batch, countDown.toString(), (camera.viewportWidth/2f + 20f) * SCALE, (camera.viewportHeight/2f + 50f) * SCALE)
+        }
         batch.draw(playerBall.getBallSprite(), playerBall.getBallSprite().x,
                 playerBall.getBallSprite().y)
         batch.end()
@@ -244,14 +251,14 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
                    paddleRight.getPaddleSprite().y)
     }
 
-    private fun setupGameArea() {
+    private fun setupPlayArea() {
         //createWalls()
         // paddles
-        paddleLeft = Paddle(this, 135f, camera.viewportHeight/2,0)
-        paddleRight = Paddle(this,  camera.viewportWidth - 135f,camera.viewportHeight/2f,1)
+        paddleLeft = Paddle(this, 220f, camera.viewportHeight/2,0)
+        paddleRight = Paddle(this,  camera.viewportWidth - 220f,camera.viewportHeight/2f,1)
         // deathZones
-        deathZoneLeft = DeathZone(world, 160f, camera.viewportHeight - 270f,1f, camera.viewportHeight/2f)
-        deathZoneRight = DeathZone(world, 160f, camera.viewportHeight - 270f, camera.viewportWidth - 1f, camera.viewportHeight/2)
+        deathZoneLeft = DeathZone(world, 330f, camera.viewportHeight - 250f,1f, camera.viewportHeight/2f)
+        deathZoneRight = DeathZone(world, 330f, camera.viewportHeight - 250f, camera.viewportWidth - 1f, camera.viewportHeight/2)
         // Joint between paddle and deathZone
         createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight/ 2,
                 - camera.viewportHeight/ 2,  Vector2(67f/ PPM, 0f), Vector2(0f, 0f))
