@@ -47,7 +47,7 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
     private lateinit var deathZoneRight: DeathZone
     private var score = 0
     private var rounds = 3
-    private var gameState = GameState.PLAY
+    private var gameState = GameState.COUNTDOWN
     private var startTime = 0f
     lateinit var font22: BitmapFont
 
@@ -81,6 +81,7 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
         world.step(1/APP_FPS, 6, 2)
         //setObjectPositions
         playerBall.moveBall(delta)
+        //playerBall.testMove(delta)
         //paddleLeft.movePaddle(delta)
         //paddleRight.movePaddle(delta)
         //clear the screen
@@ -103,7 +104,7 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
         when (gameState) {
             GameState.COUNTDOWN -> {
                 renderAll()
-                if (startTime > 3)
+                if (startTime > 2)
                 setGameState(GameState.PLAY)
             }
             GameState.PLAY -> {
@@ -165,9 +166,8 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
     }
 
     private fun resetPlayArea() {
-        playerBall.setIsMoving(false)
-        paddleLeft.setIsMoving(false)
-        paddleRight.setIsMoving(false)
+        playerBall.setCenterDimensions()
+        resetObjectPositions()
         setGameState(GameState.COUNTDOWN)
     }
 
@@ -184,14 +184,10 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
                             && fixB == playerBall.getBallBody()) {
                         --rounds
                         Log.d("DEBUG2", "rounds: $rounds")
-                        //resetPlayArea()
+                        resetPlayArea()
                         if (rounds <= 0) {
                             //setGameState(GameState.GAME_OVER)
                         }
-                    /*    if (VectorUtils.adjustByRangeY(playerBall.position, 0f, paddleLeft.getPaddleSprite().width)) {
-                            //playerBall.velocity.y = 0f
-                            Log.d("DEBUG", "in deathzone range")
-                        }*/
                     }
                     // collision with paddles, increase score here
                     if (fixA == paddleLeft.getPaddleBody() ||  fixA == paddleRight.getPaddleBody()
@@ -200,11 +196,11 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
                         Log.d("DEBUG4", "score: $score")
                         playerBall.getBallBody().applyForce(100f, 0f, 10f, 0f, true)
 
-                        if (VectorUtils.adjustByRangeY(playerBall.position, 0f, paddleLeft.getPaddleSprite().height)) {
+                 /*       if (VectorUtils.adjustByRangeY(playerBall.position, 0f, paddleLeft.getPaddleSprite().height)) {
                             playerBall.getBallBody().setTransform(playerBall.position.x + 10f, playerBall.position.y,
                                     playerBall.getBallBody().angle)
                             Log.d("DEBUG", "in paddle range")
-                        }
+                        }*/
                     }
                 }
                 override fun endContact(contact: Contact?) {
@@ -313,15 +309,18 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
         return world.createJoint(pDef)
     }
 
-    private fun setObjectPositions() {
+    private fun resetObjectPositions() {
         playerBall.getBallSprite().setPosition(
                 (playerBall.getBallBody().position.x * PPM * SCALE) - playerBall.getBallSprite().width/2f,
                 (playerBall.getBallBody().position.y * PPM * SCALE)- playerBall.getBallSprite().height/2f)
-        paddleLeft.getPaddleSprite().setPosition(
+        playerBall.getBallBody().setTransform((playerBall.getBallSprite().x)/ PPM/ SCALE,
+                                              playerBall.getBallSprite().y / PPM / SCALE,
+                                               playerBall.getBallBody().angle)
+     /*   paddleLeft.getPaddleSprite().setPosition(
                 (paddleLeft.getPaddleBody().position.x * PPM * SCALE) - paddleLeft.getPaddleSprite().width/2f,
                 (paddleLeft.getPaddleBody().position.y * PPM * SCALE)- paddleLeft.getPaddleSprite().height/2f)
         paddleRight.getPaddleSprite().setPosition(
                 (paddleRight.getPaddleBody().position.x * PPM * SCALE) - paddleRight.getPaddleSprite().width/2f,
-                (paddleRight.getPaddleBody().position.y * PPM * SCALE)- paddleRight.getPaddleSprite().height/2f)
+                (paddleRight.getPaddleBody().position.y * PPM * SCALE)- paddleRight.getPaddleSprite().height/2f)*/
     }
 }
