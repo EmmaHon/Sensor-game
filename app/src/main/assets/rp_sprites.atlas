@@ -1,0 +1,34 @@
+
+rp_sprites.png
+size: 2048,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+RP_Asset_Ball
+  rotate: false
+  xy: 1978, 1232
+  size: 68, 68
+  orig: 68, 68
+  offset: 0, 0
+  index: -1
+RP_Asset_Bat_LEFT
+  rotate: false
+  xy: 2, 2
+  size: 52, 216
+  orig: 52, 216
+  offset: 0, 0
+  index: -1
+RP_Asset_Bat_RIGHT
+  rotate: false
+  xy: 1924, 1084
+  size: 52, 216
+  orig: 52, 216
+  offset: 0, 0
+  index: -1
+RP_Asset_Play_Area
+  rotate: false
+  xy: 2, 220
+  size: 1920, 1080
+  orig: 1920, 1080
+  offset: 0, 0
+  index: -1
