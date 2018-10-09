@@ -178,6 +178,7 @@ class GameScreen(activity: Activity, mGame: RiggedPong): Screen {
         camera.setToOrtho(false, width/ RiggedPong.SCALE, height/ RiggedPong.SCALE)
     }
 
+
     // called when app is destroyed
     override fun dispose() {
         textureAtlas.dispose()
