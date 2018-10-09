@@ -2,33 +2,30 @@ package com.example.anni.riggedpongsensorproject.screens
 
 import android.content.res.Resources
 import android.util.Log
-import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef
-import com.example.anni.riggedpongsensorproject.R
 import com.example.anni.riggedpongsensorproject.sprites.GameObjectBall
 import com.example.anni.riggedpongsensorproject.RiggedPong
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_FPS
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
-import com.example.anni.riggedpongsensorproject.fragments.StartMenuFragment
 import com.example.anni.riggedpongsensorproject.sprites.DeathZone
 import com.example.anni.riggedpongsensorproject.sprites.Paddle
 import com.example.anni.riggedpongsensorproject.utils.GameState
+import com.example.anni.riggedpongsensorproject.utils.PreviousPaddleHit
+import com.example.anni.riggedpongsensorproject.utils.PreviousPaddleHit.*
 import com.example.anni.riggedpongsensorproject.utils.VectorUtils
+import java.nio.file.StandardCopyOption
 
-class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
+class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
 
     private val game = pongGame
     private val font = pongFont
@@ -41,15 +38,14 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
     private lateinit var world: World
     private val b2Debug = Box2DDebugRenderer() // render body objects for debugging
     private lateinit var playerBall: GameObjectBall
-    private lateinit var paddleLeft: Paddle
-    private lateinit var paddleRight: Paddle
+    lateinit var paddleLeft: Paddle
+    lateinit var paddleRight: Paddle
     private lateinit var deathZoneLeft: DeathZone
     private lateinit var deathZoneRight: DeathZone
     private var score = 0
     private var rounds = 3
     private var gameState = GameState.COUNTDOWN
     private var startTime = 0f
-    lateinit var font22: BitmapFont
 
     // what needs to be in memory, otherwise move to show-method
     init {
@@ -78,12 +74,12 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
 
     fun update(delta: Float) {
         // advance the world by the amount of time that has elapsed
-        world.step(1/APP_FPS, 6, 2)
+        world.step(1 / APP_FPS, 6, 2)
         //setObjectPositions
-        playerBall.moveBall(delta)
+        playerBall.moveBall(delta, paddleLeft, paddleRight)
         //playerBall.testMove(delta)
-        //paddleLeft.movePaddle(delta)
-        //paddleRight.movePaddle(delta)
+        paddleLeft.movePaddle(delta)
+        paddleRight.movePaddle(delta)
         //clear the screen
         Gdx.gl.glClearColor(0.25f, 0.25f, 0.25f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -92,7 +88,7 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
 
     // functions from Screen
     override fun show() {
-        world = World(Vector2(0f,0f), true)
+        world = World(Vector2(0f, 0f), true)
         setupPlayArea()
         setOnContactListener()
         batch.projectionMatrix = camera.combined
@@ -130,9 +126,9 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
     // called when app resumes from a paused state
     override fun resume() {}
 
-    // called when screen in resized
+    // called when screen is resized
     override fun resize(width: Int, height: Int) {
-        camera.setToOrtho(false, width/ RiggedPong.SCALE, height/ RiggedPong.SCALE)
+        camera.setToOrtho(false, width / RiggedPong.SCALE, height / RiggedPong.SCALE)
     }
 
     // called when app is destroyed
@@ -144,21 +140,21 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
         val roundUITexture1 = Texture(Gdx.files.internal("rp_ui_round.png"))
         when (rounds) {
             3 -> {
-                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f - 30f)* SCALE - roundUITexture1.width/2f,
+                batch.draw(roundUITexture1, (camera.viewportWidth / 2f - 30f) * SCALE - roundUITexture1.width / 2f,
                         (camera.viewportHeight - 45f) * SCALE)
-                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f)* SCALE - roundUITexture1.width/2f,
+                batch.draw(roundUITexture1, (camera.viewportWidth / 2f) * SCALE - roundUITexture1.width / 2f,
                         (camera.viewportHeight - 45f) * SCALE)
-                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f + 30f)* SCALE - roundUITexture1.width/2f,
+                batch.draw(roundUITexture1, (camera.viewportWidth / 2f + 30f) * SCALE - roundUITexture1.width / 2f,
                         (camera.viewportHeight - 45f) * SCALE)
             }
             2 -> {
-                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f + 30f)* SCALE - roundUITexture1.width/2f,
+                batch.draw(roundUITexture1, (camera.viewportWidth / 2f + 30f) * SCALE - roundUITexture1.width / 2f,
                         (camera.viewportHeight - 45f) * SCALE)
-                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f)* SCALE - roundUITexture1.width/2f,
+                batch.draw(roundUITexture1, (camera.viewportWidth / 2f) * SCALE - roundUITexture1.width / 2f,
                         (camera.viewportHeight - 45f) * SCALE)
             }
             1 -> {
-                batch.draw(roundUITexture1, (camera.viewportWidth/ 2f + 30f)* SCALE - roundUITexture1.width/2f,
+                batch.draw(roundUITexture1, (camera.viewportWidth / 2f + 30f) * SCALE - roundUITexture1.width / 2f,
                         (camera.viewportHeight - 45f) * SCALE)
             }
             else -> {
@@ -193,26 +189,39 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
                         }
                     }
                     // collision with paddles, increase score here
-                    if (fixA == paddleLeft.getPaddleBody() ||  fixA == paddleRight.getPaddleBody()
+                    if (fixA == paddleLeft.getPaddleBody() || fixA == paddleRight.getPaddleBody()
                             && fixB == playerBall.getBallBody()) {
-                        score += 10
-                        Log.d("DEBUG4", "score: $score")
-                        playerBall.getBallBody().applyForce(100f, 0f, 10f, 0f, true)
+                        when (fixA) {
+                            paddleLeft.getPaddleBody() -> {
+                                playerBall.hitLeftPaddle = true
+                                playerBall.paddleHit = LEFT_PADDLE
+                            }
+                            paddleRight.getPaddleBody() -> {
+                                playerBall.hitRightPaddle = true
+                                playerBall.paddleHit = RIGHT_PADDLE
+                            }
+                        }
+                        if (playerBall.previousHitPaddle == NO_PADDLE) {
+                            score += 10
+                            if (fixA == paddleLeft.getPaddleBody()) playerBall.previousHitPaddle = LEFT_PADDLE
+                            if (fixA == paddleRight.getPaddleBody()) playerBall.previousHitPaddle = RIGHT_PADDLE
+                        } else {
+                            if (playerBall.paddleHit == LEFT_PADDLE && playerBall.previousHitPaddle == RIGHT_PADDLE) {
+                                score += 10
+                                playerBall.previousHitPaddle = LEFT_PADDLE
+                            }
+                            if (playerBall.paddleHit == RIGHT_PADDLE && playerBall.previousHitPaddle == LEFT_PADDLE) {
+                                score += 10
+                                playerBall.previousHitPaddle = RIGHT_PADDLE
+                            }
+                        }
+                    }
+                }
 
-                 /*       if (VectorUtils.adjustByRangeY(playerBall.position, 0f, paddleLeft.getPaddleSprite().height)) {
-                            playerBall.getBallBody().setTransform(playerBall.position.x + 10f, playerBall.position.y,
-                                    playerBall.getBallBody().angle)
-                            Log.d("DEBUG", "in paddle range")
-                        }*/
-                    }
-                }
                 override fun endContact(contact: Contact?) {
-                    val fixA = contact!!.fixtureA
-                    val fixB = contact.fixtureB
-                    if (fixA == paddleLeft.getPaddleBody() ||  fixA == paddleRight.getPaddleBody()
-                            && fixB == playerBall.getBallBody()) {
-                    }
+
                 }
+
                 override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}
                 override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {}
             })
@@ -225,14 +234,14 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
         renderBats()
         renderRounds()
         when {
-            score < 10 -> font.draw(batch, score.toString(), (camera.viewportWidth/2f - 14f) * SCALE,120f)
-            score < 100 -> font.draw(batch, score.toString(), (camera.viewportWidth/2f - 28f) * SCALE,120f)
-            score < 1000 -> font.draw(batch, score.toString(), (camera.viewportWidth/2f - 42f) * SCALE,120f)
-            score < 10000 -> font.draw(batch, score.toString(), (camera.viewportWidth/2f - 56f) * SCALE,120f)
+            score < 10 -> font.draw(batch, score.toString(), (camera.viewportWidth / 2f - 14f) * SCALE, 120f)
+            score < 100 -> font.draw(batch, score.toString(), (camera.viewportWidth / 2f - 28f) * SCALE, 120f)
+            score < 1000 -> font.draw(batch, score.toString(), (camera.viewportWidth / 2f - 42f) * SCALE, 120f)
+            score < 10000 -> font.draw(batch, score.toString(), (camera.viewportWidth / 2f - 56f) * SCALE, 120f)
         }
         if (gameState == GameState.COUNTDOWN && startTime.toInt() <= 2) {
             val countDown = 3 - startTime.toInt()
-            font.draw(batch, countDown.toString(), (camera.viewportWidth/2f + 20f) * SCALE, (camera.viewportHeight/2f + 50f) * SCALE)
+            font.draw(batch, countDown.toString(), (camera.viewportWidth / 2f + 20f) * SCALE, (camera.viewportHeight / 2f + 50f) * SCALE)
         }
         batch.draw(playerBall.getBallSprite(), playerBall.getBallSprite().x,
                 playerBall.getBallSprite().y)
@@ -246,24 +255,24 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
 
     private fun renderBats() {
         batch.draw(paddleLeft.getPaddleSprite(), paddleLeft.getPaddleSprite().x,
-                   paddleLeft.getPaddleSprite().y)
+                paddleLeft.getPaddleSprite().y)
         batch.draw(paddleRight.getPaddleSprite(), paddleRight.getPaddleSprite().x,
-                   paddleRight.getPaddleSprite().y)
+                paddleRight.getPaddleSprite().y)
     }
 
     private fun setupPlayArea() {
         //createWalls()
         // paddles
-        paddleLeft = Paddle(this, 220f, camera.viewportHeight/2,0)
-        paddleRight = Paddle(this,  camera.viewportWidth - 220f,camera.viewportHeight/2f,1)
+        paddleLeft = Paddle(this, 220f, camera.viewportHeight / 2, 0)
+        paddleRight = Paddle(this, camera.viewportWidth - 220f, camera.viewportHeight / 2f, 1)
         // deathZones
-        deathZoneLeft = DeathZone(world, 330f, camera.viewportHeight - 250f,1f, camera.viewportHeight/2f)
-        deathZoneRight = DeathZone(world, 330f, camera.viewportHeight - 250f, camera.viewportWidth - 1f, camera.viewportHeight/2)
+        deathZoneLeft = DeathZone(world, 330f, camera.viewportHeight - 250f, 1f, camera.viewportHeight / 2f)
+        deathZoneRight = DeathZone(world, 330f, camera.viewportHeight - 250f, camera.viewportWidth - 1f, camera.viewportHeight / 2)
         // Joint between paddle and deathZone
-        createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight/ 2,
-                - camera.viewportHeight/ 2,  Vector2(67f/ PPM, 0f), Vector2(0f, 0f))
-        createJoint(deathZoneRight.getDeathZoneBody(), paddleRight.getPaddleBody(), camera.viewportHeight/ 2,
-                - camera.viewportHeight/ 2, Vector2(-67f/ PPM, 0f), Vector2(0f, 0f))
+        createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight / 2,
+                -camera.viewportHeight / 2, Vector2(110f / PPM, 0f), Vector2(0f, 0f))
+        createJoint(deathZoneRight.getDeathZoneBody(), paddleRight.getPaddleBody(), camera.viewportHeight / 2,
+                -camera.viewportHeight / 2, Vector2(-110f / PPM, 0f), Vector2(0f, 0f))
         // player
         playerBall = GameObjectBall(this)
     }
@@ -291,11 +300,11 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
         // create a full "box" along the screen sides
         val vertices = arrayOfNulls<Vector2>(5)
         val adjustFactor = 2f
-        vertices[0] = Vector2(20f/ PPM/ adjustFactor, 60f/ PPM/ adjustFactor)
-        vertices[1] = Vector2((camera.viewportWidth -20f)/ PPM/ adjustFactor, 60f/ PPM/ adjustFactor)
-        vertices[2] = Vector2((camera.viewportWidth -20f)/ PPM/ adjustFactor, (camera.viewportHeight -60f)/ PPM/ adjustFactor)
-        vertices[3] = Vector2(20f/ PPM/ adjustFactor, (camera.viewportHeight -60f)/ PPM/ adjustFactor)
-        vertices[4] = Vector2(20f/ PPM/ adjustFactor, 60f/ PPM/ adjustFactor)
+        vertices[0] = Vector2(20f / PPM / adjustFactor, 60f / PPM / adjustFactor)
+        vertices[1] = Vector2((camera.viewportWidth - 20f) / PPM / adjustFactor, 60f / PPM / adjustFactor)
+        vertices[2] = Vector2((camera.viewportWidth - 20f) / PPM / adjustFactor, (camera.viewportHeight - 60f) / PPM / adjustFactor)
+        vertices[3] = Vector2(20f / PPM / adjustFactor, (camera.viewportHeight - 60f) / PPM / adjustFactor)
+        vertices[4] = Vector2(20f / PPM / adjustFactor, 60f / PPM / adjustFactor)
         chainShape.createChain(vertices)
         return chainShape
     }
@@ -318,16 +327,16 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont): Screen {
 
     private fun resetObjectPositions() {
         playerBall.getBallSprite().setPosition(
-                (playerBall.getBallBody().position.x * PPM * SCALE) - playerBall.getBallSprite().width/2f,
-                (playerBall.getBallBody().position.y * PPM * SCALE)- playerBall.getBallSprite().height/2f)
-        playerBall.getBallBody().setTransform((playerBall.getBallSprite().x)/ PPM/ SCALE,
-                                              playerBall.getBallSprite().y / PPM / SCALE,
-                                               playerBall.getBallBody().angle)
-     /*   paddleLeft.getPaddleSprite().setPosition(
-                (paddleLeft.getPaddleBody().position.x * PPM * SCALE) - paddleLeft.getPaddleSprite().width/2f,
-                (paddleLeft.getPaddleBody().position.y * PPM * SCALE)- paddleLeft.getPaddleSprite().height/2f)
-        paddleRight.getPaddleSprite().setPosition(
-                (paddleRight.getPaddleBody().position.x * PPM * SCALE) - paddleRight.getPaddleSprite().width/2f,
-                (paddleRight.getPaddleBody().position.y * PPM * SCALE)- paddleRight.getPaddleSprite().height/2f)*/
+                (playerBall.getBallBody().position.x * PPM * SCALE) - playerBall.getBallSprite().width / 2f,
+                (playerBall.getBallBody().position.y * PPM * SCALE) - playerBall.getBallSprite().height / 2f)
+        playerBall.getBallBody().setTransform((playerBall.getBallSprite().x) / PPM / SCALE,
+                playerBall.getBallSprite().y / PPM / SCALE,
+                playerBall.getBallBody().angle)
+        /*   paddleLeft.getPaddleSprite().setPosition(
+                   (paddleLeft.getPaddleBody().position.x * PPM * SCALE) - paddleLeft.getPaddleSprite().width/2f,
+                   (paddleLeft.getPaddleBody().position.y * PPM * SCALE)- paddleLeft.getPaddleSprite().height/2f)
+           paddleRight.getPaddleSprite().setPosition(
+                   (paddleRight.getPaddleBody().position.x * PPM * SCALE) - paddleRight.getPaddleSprite().width/2f,
+                   (paddleRight.getPaddleBody().position.y * PPM * SCALE)- paddleRight.getPaddleSprite().height/2f)*/
     }
 }

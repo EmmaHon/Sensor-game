@@ -15,7 +15,7 @@ class RiggedPong(activity: Activity) : Game() {
         const val APP_VERSION = 0.1
         const val SCALE = 2f
         const val DENSITY = 1f
-        const val APP_FPS = 40f
+        const val APP_FPS = 60f
         const val PPM = 32f //Pixel Per Meter
     }
 

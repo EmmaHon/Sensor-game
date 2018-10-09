@@ -1,12 +1,15 @@
 package com.example.anni.riggedpongsensorproject.sprites
 
+import android.support.annotation.FloatRange
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
 import com.example.anni.riggedpongsensorproject.screens.GameScreen
 import com.example.anni.riggedpongsensorproject.utils.ObjectBits
+import com.example.anni.riggedpongsensorproject.utils.random
 import kotlin.math.sin
 
 class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
@@ -19,7 +22,8 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
     private val paddleStartX = xPos
     private val paddleStartY = yPos
     private var numberOfTicks = 0
-    private var isMoving = true
+    private val MAX_SPEED = 20
+    private var speedY = 100
 
     init {
         setupPaddle()
@@ -33,21 +37,19 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
         return b2bodyPaddle
     }
 
+    fun getPaddleBodyPosition(): Vector2 {
+        return b2bodyPaddle.position
+    }
+
     fun movePaddle(delta: Float) {
         // up-down paddle movement with sinusoidal motion
         // TODO: random speeds (at a specific range) and direction
-        if (isMoving) {
-            numberOfTicks++
-            val maxTop = camera.viewportHeight - 110f
-            val maxDown = 300f
-            var speedY = 70f
-            paddleSprite.y = (maxDown * sin(numberOfTicks * 0.5f * Math.PI/ speedY).toFloat()) + maxTop
-            b2bodyPaddle.setTransform(b2bodyPaddle.position.x,(paddleSprite.y + paddleSprite.height/2f)/ PPM/ SCALE, b2bodyPaddle.angle)
-        }
-    }
-
-    fun setIsMoving(moving: Boolean) {
-        isMoving = moving
+        val maxTop = camera.viewportHeight - 110f
+        val maxDown = 300f
+        //if (speedY >= MAX_SPEED)
+        numberOfTicks++
+        paddleSprite.y = (maxDown * sin(numberOfTicks * 0.5f * Math.PI/ speedY).toFloat()) + maxTop
+        b2bodyPaddle.setTransform(b2bodyPaddle.position.x,(paddleSprite.y + paddleSprite.height/2f)/ PPM/ SCALE, b2bodyPaddle.angle)
     }
 
     private fun setupPaddle() {
@@ -59,6 +61,8 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
         createPaddleBody(world, paddleSprite.x + paddleSprite.width/2f,
                         paddleSprite.y + paddleSprite.height/2f, ObjectBits.PADDLE.bits,
                         ObjectBits.BALL.bits, 0)
+        val speedValues = IntRange(20, 100)
+        speedY = speedValues.random()
     }
 
     private fun createPaddleBody(world: World, xPos: Float, yPos: Float,

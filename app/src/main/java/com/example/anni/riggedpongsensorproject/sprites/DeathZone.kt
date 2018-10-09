@@ -2,9 +2,7 @@ package com.example.anni.riggedpongsensorproject.sprites
 
 import com.badlogic.gdx.physics.box2d.*
 import com.example.anni.riggedpongsensorproject.RiggedPong
-import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
-import com.example.anni.riggedpongsensorproject.utils.ObjectBits
 
 class DeathZone(mWorld: World, width: Float, height: Float, xPos: Float, yPos: Float) {
 

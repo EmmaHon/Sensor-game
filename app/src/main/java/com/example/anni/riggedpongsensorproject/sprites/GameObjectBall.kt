@@ -13,6 +13,7 @@ import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
 import com.example.anni.riggedpongsensorproject.utils.ObjectBits
+import com.example.anni.riggedpongsensorproject.utils.PreviousPaddleHit
 import kotlin.experimental.or
 import kotlin.math.sin
 
@@ -36,6 +37,10 @@ class GameObjectBall(gameScreen: GameScreen) {
     var position = Vector2() //ball position
     var velocity = Vector2()
     var firstStarted = true
+    var hitRightPaddle = false
+    var hitLeftPaddle = false
+    var previousHitPaddle = PreviousPaddleHit.NO_PADDLE
+    var paddleHit = PreviousPaddleHit.NO_PADDLE
 
     init {
         setupBallObject()
@@ -51,43 +56,23 @@ class GameObjectBall(gameScreen: GameScreen) {
     }
 
     fun setCenterDimensions() {
-        Log.d("DEBUGMOVE", "function not moving")
-        if (VectorUtils.adjustByRangeX(position, Gdx.graphics.width/2f,Gdx.graphics.width/ 2f))
+        Log.d("DEBUGMOVE", "bound ball to center")
+        if (VectorUtils.adjustByRangeX(position, Gdx.graphics.width / 2f, Gdx.graphics.width / 2f))
             velocity.x = 0f
-        if (VectorUtils.adjustByRangeY(position, Gdx.graphics.height/ 2f,
-                        Gdx.graphics.height/ 2f))
+        if (VectorUtils.adjustByRangeY(position, Gdx.graphics.height / 2f, Gdx.graphics.height / 2f))
             velocity.y = 0f
-
     }
 
-    fun testMove(delta: Float) {
-        if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
-            //1. set the accelerometer input
-            acceleration.set(Gdx.input.accelerometerY, Gdx.input.accelerometerX)
-            /*         Log.d("DEBUG", "y: ${Gdx.input.accelerometerY} " +
-                             "and x: ${Gdx.input.accelerometerX}")*/
-
-            // modify and check the ball's velocity
-            velocity.add(acceleration)
-            //VectorUtils.adjustByRange(velocity, -MAX_SPEED, MAX_SPEED)
-            // modify and check the ball's position, applying the delta parameter
-            position.add(velocity.x * delta, velocity.y * delta)
-            Log.d("DEBUG2", "velocity: $velocity and acceleration: $acceleration and position: $position and delta: $delta")
-
-            Log.d("DEBUG5", "bodys position before setting new pos: ${b2bodyBall.position}")
-            // update the ball's actual position
-            ballSprite.setPosition(
-                    ((b2bodyBall.position.x * PPM * SCALE) - ballSprite.width / 2f),
-                    ((b2bodyBall.position.y * PPM * SCALE) - ballSprite.height / 2f))
-            Log.d("DEBUG3", "bodys position after setting new pos: ${b2bodyBall.position}")
-            // update position of the box2dBody
-            b2bodyBall.setTransform((position.x) / PPM / SCALE, position.y / PPM / SCALE, b2bodyBall.angle)
-            Log.d("DEBUG4", "position: ${position}")
-        }
-
+    private fun setHitPaddleDimension(paddle: Paddle) {
+        val height = camera.viewportHeight
+        val width = camera.viewportWidth
+        if (VectorUtils.adjustByRangeX(position, Gdx.graphics.width / 2f, Gdx.graphics.width / 2f))
+            velocity.x = 0f
+        if (VectorUtils.adjustByRangeY(position, Gdx.graphics.height / 2f, Gdx.graphics.height / 2f))
+            velocity.y = 0f
     }
 
-    fun moveBall(delta: Float) {
+    fun moveBall(delta: Float, paddleLeft: Paddle, paddleRight: Paddle) {
         numberOfTicks++
         // check the input and calculate the acceleration
         if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
@@ -96,9 +81,19 @@ class GameObjectBall(gameScreen: GameScreen) {
             if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
                 acceleration.set(Gdx.input.accelerometerY, Gdx.input.accelerometerX)
             }
-            if (firstStarted) {
-                setCenterDimensions()
-                firstStarted = false
+            when {
+                firstStarted -> {
+                    setCenterDimensions()
+                    firstStarted = false
+                }
+                hitLeftPaddle -> {
+                    setHitPaddleDimension(paddleLeft)
+                    hitLeftPaddle = false
+                }
+                hitRightPaddle -> {
+                    setHitPaddleDimension(paddleRight)
+                    hitRightPaddle = false
+                }
             }
             // set the acceleration bounds
             VectorUtils.adjustByRange(acceleration, -2f, 2f)
@@ -151,16 +146,19 @@ class GameObjectBall(gameScreen: GameScreen) {
             if (VectorUtils.adjustByRangeY(position, 100f, (Gdx.graphics.height - 100f)))
                 velocity.y = 0f
 
+            // update the ball's actual sprite and body position
+            /* player controls only y-axis movement
             val maxTop = camera.viewportWidth
-            val maxDown = 800f
-            /*      ballSprite.x = (maxDown * sin(numberOfTicks * 0.5f * Math.PI/ currentSpeed).toFloat()) + maxTop
-                  ballSprite.y = ((b2bodyBall.position.y * PPM * SCALE) - ballSprite.height/ 2f)*/
-            // update the ball's actual position
+            val maxDown = 700f
+            val currentSpeed = 80f
+            ballSprite.x = (maxDown * sin(numberOfTicks * 0.5f * Math.PI/ currentSpeed).toFloat()) + maxTop
+            ballSprite.y = ((b2bodyBall.position.y * PPM * SCALE) - ballSprite.height/ 2f)
+            b2bodyBall.setTransform((ballSprite.x + ballSprite.width/2f)/ PPM/ SCALE, position.y / PPM / SCALE, b2bodyBall.angle)*/
+
+            // player controls y- and x-axis
             ballSprite.setPosition(
                     ((b2bodyBall.position.x * PPM * SCALE) - ballSprite.width / 2f),
                     ((b2bodyBall.position.y * PPM * SCALE) - ballSprite.height / 2f))
-            // update position of the box2dBody
-            //b2bodyBall.setTransform((ballSprite.x + ballSprite.width/2f)/ PPM/ SCALE, position.y / PPM / SCALE, b2bodyBall.angle)
             b2bodyBall.setTransform((position.x) / PPM / SCALE, position.y / PPM / SCALE, b2bodyBall.angle)
         }
     }
