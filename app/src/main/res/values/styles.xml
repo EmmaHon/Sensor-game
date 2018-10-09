@@ -9,5 +9,5 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <color name="statusbarTransparent">#df303f9f</color>
+
 </resources>
