@@ -17,13 +17,10 @@ import com.example.anni.riggedpongsensorproject.RiggedPong
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_FPS
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
+import com.example.anni.riggedpongsensorproject.listeners.BallContactListener
 import com.example.anni.riggedpongsensorproject.sprites.DeathZone
 import com.example.anni.riggedpongsensorproject.sprites.Paddle
 import com.example.anni.riggedpongsensorproject.utils.GameState
-import com.example.anni.riggedpongsensorproject.utils.PreviousPaddleHit
-import com.example.anni.riggedpongsensorproject.utils.PreviousPaddleHit.*
-import com.example.anni.riggedpongsensorproject.utils.VectorUtils
-import java.nio.file.StandardCopyOption
 
 class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
 
@@ -31,8 +28,8 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
     private val font = pongFont
     private val batch = pongGame.getSpriteBatch()
     private val textureAtlas = TextureAtlas("rp_sprites.atlas")
-    private val screenWidth = Resources.getSystem().displayMetrics.widthPixels.toFloat()
-    private val screenHeight = Resources.getSystem().displayMetrics.heightPixels.toFloat()
+    private val screenWidth = Gdx.graphics.width.toFloat()
+    private val screenHeight = Gdx.graphics.height.toFloat()
     private val camera = OrthographicCamera(screenWidth, screenHeight)
     // box2d
     private lateinit var world: World
@@ -42,10 +39,10 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
     lateinit var paddleRight: Paddle
     private lateinit var deathZoneLeft: DeathZone
     private lateinit var deathZoneRight: DeathZone
-    private var score = 0
-    private var rounds = 3
     private var gameState = GameState.COUNTDOWN
     private var startTime = 0f
+    var score = 0
+    var rounds = 3
 
     // what needs to be in memory, otherwise move to show-method
     init {
@@ -72,12 +69,17 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
         gameState = state
     }
 
+    fun resetPlayArea() {
+        playerBall.setCenterDimensions()
+        resetObjectPositions()
+        setGameState(GameState.RESET)
+    }
+
     fun update(delta: Float) {
         // advance the world by the amount of time that has elapsed
         world.step(1 / APP_FPS, 6, 2)
         //setObjectPositions
         playerBall.moveBall(delta, paddleLeft, paddleRight)
-        //playerBall.testMove(delta)
         paddleLeft.movePaddle(delta)
         paddleRight.movePaddle(delta)
         //clear the screen
@@ -164,67 +166,11 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
         }
     }
 
-    private fun resetPlayArea() {
-        playerBall.setCenterDimensions()
-        resetObjectPositions()
-        setGameState(GameState.RESET)
-    }
-
     private fun setOnContactListener() {
-        // collision detection
+        // collision detections
         if (world != null) {
-            world.setContactListener(object : ContactListener {
-                override fun beginContact(contact: Contact?) {
-                    val fixA = contact!!.fixtureA.body
-                    val fixB = contact.fixtureB.body
-
-                    // collision with deathzones, decrease rounds here and reset arena
-                    if (fixA == deathZoneLeft.getDeathZoneBody() || fixA == deathZoneRight.getDeathZoneBody()
-                            && fixB == playerBall.getBallBody()) {
-                        --rounds
-                        Log.d("DEBUG2", "rounds: $rounds")
-                        resetPlayArea()
-                        if (rounds <= 0) {
-                            //setGameState(GameState.GAME_OVER)
-                        }
-                    }
-                    // collision with paddles, increase score here
-                    if (fixA == paddleLeft.getPaddleBody() || fixA == paddleRight.getPaddleBody()
-                            && fixB == playerBall.getBallBody()) {
-                        when (fixA) {
-                            paddleLeft.getPaddleBody() -> {
-                                playerBall.hitLeftPaddle = true
-                                playerBall.paddleHit = LEFT_PADDLE
-                            }
-                            paddleRight.getPaddleBody() -> {
-                                playerBall.hitRightPaddle = true
-                                playerBall.paddleHit = RIGHT_PADDLE
-                            }
-                        }
-                        if (playerBall.previousHitPaddle == NO_PADDLE) {
-                            score += 10
-                            if (fixA == paddleLeft.getPaddleBody()) playerBall.previousHitPaddle = LEFT_PADDLE
-                            if (fixA == paddleRight.getPaddleBody()) playerBall.previousHitPaddle = RIGHT_PADDLE
-                        } else {
-                            if (playerBall.paddleHit == LEFT_PADDLE && playerBall.previousHitPaddle == RIGHT_PADDLE) {
-                                score += 10
-                                playerBall.previousHitPaddle = LEFT_PADDLE
-                            }
-                            if (playerBall.paddleHit == RIGHT_PADDLE && playerBall.previousHitPaddle == LEFT_PADDLE) {
-                                score += 10
-                                playerBall.previousHitPaddle = RIGHT_PADDLE
-                            }
-                        }
-                    }
-                }
-
-                override fun endContact(contact: Contact?) {
-
-                }
-
-                override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}
-                override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {}
-            })
+            world.setContactListener(object : BallContactListener(this, playerBall,
+                    paddleLeft, paddleRight, deathZoneLeft, deathZoneRight) {})
         }
     }
 

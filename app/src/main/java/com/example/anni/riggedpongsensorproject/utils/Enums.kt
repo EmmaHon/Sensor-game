@@ -11,6 +11,6 @@ package com.example.anni.riggedpongsensorproject.utils
         COUNTDOWN, PLAY, GAME_OVER, RESET
     }
 
-    enum class PreviousPaddleHit {
+    enum class PaddleHit {
         RIGHT_PADDLE, LEFT_PADDLE, NO_PADDLE
     }

@@ -13,8 +13,9 @@ import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
 import com.example.anni.riggedpongsensorproject.utils.ObjectBits
-import com.example.anni.riggedpongsensorproject.utils.PreviousPaddleHit
+import com.example.anni.riggedpongsensorproject.utils.PaddleHit
 import kotlin.experimental.or
+import kotlin.math.log
 import kotlin.math.sin
 
 class GameObjectBall(gameScreen: GameScreen) {
@@ -29,7 +30,7 @@ class GameObjectBall(gameScreen: GameScreen) {
     private val ballRadius = 32f
     private val ballRestitution = 0.5f
     // Movement
-    private val MAX_SPEED = 200f
+    private val MAX_SPEED = 350f
     private val MAX_ACCELERATION = 20f
     private val MAX_DECELERATION = MAX_ACCELERATION / 2
     private val acceleration = Vector2()
@@ -37,10 +38,9 @@ class GameObjectBall(gameScreen: GameScreen) {
     var position = Vector2() //ball position
     var velocity = Vector2()
     var firstStarted = true
-    var hitRightPaddle = false
-    var hitLeftPaddle = false
-    var previousHitPaddle = PreviousPaddleHit.NO_PADDLE
-    var paddleHit = PreviousPaddleHit.NO_PADDLE
+    var paddleContact = false
+    var previousPaddle = PaddleHit.NO_PADDLE
+    var currentPaddle = PaddleHit.NO_PADDLE
 
     init {
         setupBallObject()
@@ -63,13 +63,22 @@ class GameObjectBall(gameScreen: GameScreen) {
             velocity.y = 0f
     }
 
-    private fun setHitPaddleDimension(paddle: Paddle) {
-        val height = camera.viewportHeight
-        val width = camera.viewportWidth
-        if (VectorUtils.adjustByRangeX(position, Gdx.graphics.width / 2f, Gdx.graphics.width / 2f))
+    private fun setHitPaddleDimension(paddleLeft: Paddle, paddleRight: Paddle) {
+        val height = camera.viewportHeight * SCALE
+        val width = camera.viewportWidth * SCALE
+        Log.d("DEBUG1", "paddle LEFT POS: ${paddleLeft.getPaddleBodyPosition()} " +
+                "and paddle RIGHT POS: ${paddleRight.getPaddleBodyPosition()}")
+        Log.d("DEBUG2", "position: $position")
+        if (VectorUtils.adjustByRangeX(position, 250f, width - 250f)) {
             velocity.x = 0f
-        if (VectorUtils.adjustByRangeY(position, Gdx.graphics.height / 2f, Gdx.graphics.height / 2f))
+            Log.d("DEBUG3","ADJUSTRANGE X: min x: 220f and max x: ${width-220f}")
+        }
+        /*if (VectorUtils.adjustByRangeY(position, height/ 2f - paddleLeft.getPaddleSprite().height/2f,
+                        height/ 2f + paddleLeft.getPaddleSprite().height/2f)) {
             velocity.y = 0f
+            Log.d("DEBUG4", "ADJUSTRANGE Y: min y: ${height/ 2f - paddleLeft.getPaddleSprite().height/2f}" +
+                    " and max y: ${height/ 2f + paddleLeft.getPaddleSprite().height/2f}")
+        }*/
     }
 
     fun moveBall(delta: Float, paddleLeft: Paddle, paddleRight: Paddle) {
@@ -86,13 +95,8 @@ class GameObjectBall(gameScreen: GameScreen) {
                     setCenterDimensions()
                     firstStarted = false
                 }
-                hitLeftPaddle -> {
-                    setHitPaddleDimension(paddleLeft)
-                    hitLeftPaddle = false
-                }
-                hitRightPaddle -> {
-                    setHitPaddleDimension(paddleRight)
-                    hitRightPaddle = false
+                paddleContact -> {
+                    setHitPaddleDimension(paddleLeft, paddleRight)
                 }
             }
             // set the acceleration bounds
