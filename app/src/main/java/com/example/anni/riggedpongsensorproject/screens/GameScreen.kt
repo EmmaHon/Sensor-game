@@ -100,6 +100,7 @@ class GameScreen(activity: Activity, mGame: RiggedPong): Screen {
             gameOverintent.putExtra("SCORE", score)
             game.dispose()
             activity.startActivity(gameOverintent)
+
         }
     }
 
@@ -117,7 +118,6 @@ class GameScreen(activity: Activity, mGame: RiggedPong): Screen {
                         Log.d("DEBUG1", "CONTACT with death zone!")
                         --round
                         Log.d("DEBUG2", "rounds: $round")
-                        //tänne pitäisi saada tallennus pisteistä
                         resetPlayArea()
                         if (round ==0) {
                             GameOver()

@@ -64,7 +64,7 @@
         android:layout_marginStart="83dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/uihighscorebotton"
-        android:text=""
+        android:contentDescription="@string/leaderboard_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/start_game_btn"

@@ -23,6 +23,7 @@ class InfoFragment: Fragment() {
         super.onActivityCreated(savedInstanceState)
         setOnClickListeners()
     }
+    //fetching data from wikipedia
     private fun setOnClickListeners() {
         clickPp.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)

@@ -4,50 +4,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LeaderBoardFragment">
+    android:background="@drawable/vertical_title_background"
+    tools:context=".LeaderBoardFragment"><![CDATA[
+
+    />
+
+    ]]>
+
+    <ImageButton
+        android:id="@+id/startMenu"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/home_icon"
+        android:contentDescription="@string/backStart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="325dp"
-        android:layout_height="wrap_content"
+        android:layout_height="28dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/Board"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="96dp"
+        android:background="@drawable/highscore"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat"
         android:textSize="24sp"
-        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/mainlistview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Leaderboard" />
+        app:layout_constraintVertical_bias="0.71000004" />
 
     <ListView
-        android:id="@+id/boardView"
-        android:layout_width="316dp"
-        android:layout_height="238dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:id="@+id/mainlistview"
+        android:layout_width="309dp"
+        android:layout_height="158dp"
+        android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@+id/startMenu"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.14" />
-
-    <Button
-        android:id="@+id/startMenu"
-        android:layout_width="208dp"
-        android:layout_height="41dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/backStart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
