@@ -6,9 +6,6 @@ apply plugin: 'kotlin-android-extensions'
 
 ext {
     gdxVersion = '1.9.8'
-    box2DLightsVersion = '1.4'
-    ashleyVersion = '1.7.3'
-    aiVersion = '1.8.1'
 }
 
 android {
@@ -56,15 +53,12 @@ dependencies {
     natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
     natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
     natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
-    implementation "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-    implementation "com.badlogicgames.ashley:ashley:$ashleyVersion"
     implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
-    implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
 }
 
 // called every time gradle gets executed, takes the native dependencies of

@@ -1,5 +1,7 @@
 package com.example.anni.riggedpongsensorproject
 
+import android.app.Activity
+
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -7,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.example.anni.riggedpongsensorproject.screens.GameScreen
 
-class RiggedPong : Game() {
+class RiggedPong(private val activity: Activity) : Game() {
 
     companion object {
         const val SCALE = 2f
@@ -26,7 +28,7 @@ class RiggedPong : Game() {
     override fun create() {
         batch = SpriteBatch()
         val font22 = createFont()
-        this.setScreen(GameScreen(this, font22))
+        this.setScreen(GameScreen(activity, this, font22))
     }
 
     override fun dispose() {

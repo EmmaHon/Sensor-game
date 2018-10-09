@@ -6,9 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import com.example.anni.riggedpongsensorproject.Launcher
 import com.example.anni.riggedpongsensorproject.R
+import android.widget.ImageButton
+import com.example.anni.riggedpongsensorproject.screens.LeaderBoard
 
 class StartMenuFragment: Fragment() {
 
@@ -22,13 +23,17 @@ class StartMenuFragment: Fragment() {
     }
 
     private fun setOnClickListeners() {
-        val gameLauncherBtn = view.findViewById<Button>(R.id.start_game_btn)
-        val leaderboardBtn = view.findViewById<Button>(R.id.leaderboard_btn)
+        val gameLauncherBtn = view.findViewById<ImageButton>(R.id.start_game_btn)
+        val leaderboardBtn = view.findViewById<ImageButton>(R.id.leaderboard_btn)
+        val infoFragmentBtn =view.findViewById<ImageButton>(R.id.infoFragmentBtn)
         gameLauncherBtn.setOnClickListener {
             launchGame()
         }
         leaderboardBtn.setOnClickListener {
-            launchLeaderboardFragment()
+            launchLeaderboard()
+        }
+        infoFragmentBtn.setOnClickListener{
+            launchInfo()
         }
     }
 
@@ -37,6 +42,12 @@ class StartMenuFragment: Fragment() {
         startActivity(intent)
     }
 
-    private fun launchLeaderboardFragment() {
+    private fun launchLeaderboard() {
+            val leaderBoardintent = Intent(activity, LeaderBoard::class.java)
+            startActivity(leaderBoardintent)
+        }
+    private fun launchInfo() {
+        val mInfoFragment = InfoFragment()
+        fragmentManager.beginTransaction().add(R.id.start_menu_fragment, mInfoFragment).addToBackStack(null).commit()
     }
 }

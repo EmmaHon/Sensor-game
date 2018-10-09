@@ -8,6 +8,7 @@ import com.example.anni.riggedpongsensorproject.screens.GameScreen
 import com.example.anni.riggedpongsensorproject.objects.DeathZone
 import com.example.anni.riggedpongsensorproject.objects.GameObjectBall
 import com.example.anni.riggedpongsensorproject.objects.Paddle
+import com.example.anni.riggedpongsensorproject.utils.GameState
 import com.example.anni.riggedpongsensorproject.utils.Paddles
 
 open class BallContactListener(private val gameScreen: GameScreen, private val playerBall: GameObjectBall,
@@ -24,6 +25,7 @@ open class BallContactListener(private val gameScreen: GameScreen, private val p
             --gameScreen.rounds
             gameScreen.resetPlayArea()
             if (gameScreen.rounds <= 0) {
+                gameScreen.setGameState(GameState.GAME_OVER)
             }
         }
         // collision with paddles, increase score here

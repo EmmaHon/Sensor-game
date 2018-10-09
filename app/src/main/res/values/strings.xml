@@ -1,7 +1,28 @@
 <resources>
+    <!--Start Menu-->
     <string name="app_name">Rigged Pong</string>
     <string name="start_game_btn">Start Game</string>
     <string name="leaderboard_btn">Leaderboard</string>
-    <string name="retry_btn">Retry</string>
     <string name="quit_btn">Quit Game</string>
+    <!--Game Over-->
+    <string name="tryA">Try Again</string>
+    <string name="gameOver">Game Over</string>
+    <string name="Board">Leaderboard</string>
+    <string name="scoreLabel">150</string>
+    <string name="highScoreLabel">300</string>
+    <!--Leaderboard-->
+    <string name="backStart">Start Menu</string>
+    <!--Info-->
+    <string name="infoTitle">How to Play</string>
+    <string name="gameInfo"> When the player presses the "Start Button" the game begins and the Ball is put in motion.\n The player controls the balla\s motion rotating the phone on the X-axis,\n trying to hit one of the Bats scoring 10 points.\n Hitting the Bats scores points which are displayed on the middle top portion of the screen.\n When the Loss Zone is hit the player loses the round.\nThe player starts at 3 "Rounds"\n The game is over if the "Loss Zone" is hit when the player has no rounds left.</string>
+    <string name="click">PingPong</string>
+
+    <!--Credits-->
+    <string name="developers">Developers:</string>
+    <string name="names">Anni Luonuankoski\n and \n Emma Honkala</string>
+    <string name="art">Game Art:</string>
+    <string name="designer">Erik</string>
+
+    <!---<string name="scoreLabel">Score: %1$s</string>
+    <string name="highScoreLabel">High score: %1$s </string> -->
 </resources>

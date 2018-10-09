@@ -1,6 +1,7 @@
 package com.example.anni.riggedpongsensorproject.screens
 
-import android.util.Log
+import android.app.Activity
+import android.content.Intent
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
@@ -20,9 +21,9 @@ import com.example.anni.riggedpongsensorproject.objects.GameObjectBall
 import com.example.anni.riggedpongsensorproject.objects.Paddle
 import com.example.anni.riggedpongsensorproject.utils.GameState
 
-class GameScreen(pongGame: RiggedPong, private val font: BitmapFont) : Screen {
+class GameScreen(private val activity: Activity, private val game: RiggedPong, private val font: BitmapFont) : Screen {
 
-    private val batch = pongGame.getSpriteBatch()
+    private val batch = game.getSpriteBatch()
     private val screenWidth = Gdx.graphics.width.toFloat()
     private val screenHeight = Gdx.graphics.height.toFloat()
     private val camera = OrthographicCamera(screenWidth, screenHeight)
@@ -50,15 +51,15 @@ class GameScreen(pongGame: RiggedPong, private val font: BitmapFont) : Screen {
         batch.projectionMatrix = camera.combined
     }
 
+    override fun resize(width: Int, height: Int) {
+        camera.setToOrtho(false, width / RiggedPong.SCALE, height / RiggedPong.SCALE)
+    }
+
     override fun hide() {}
 
     override fun pause() {}
 
     override fun resume() {}
-
-    override fun resize(width: Int, height: Int) {
-        camera.setToOrtho(false, width / RiggedPong.SCALE, height / RiggedPong.SCALE)
-    }
 
     override fun dispose() {
         AssetManager.disposeTextures()
@@ -80,7 +81,7 @@ class GameScreen(pongGame: RiggedPong, private val font: BitmapFont) : Screen {
                 if (startTime > 1) setGameState(GameState.PLAY)
             }
             GameState.GAME_OVER -> {
-                Log.d("DEBUG", "game over!")
+                gameOver()
             }
         }
     }
@@ -100,6 +101,12 @@ class GameScreen(pongGame: RiggedPong, private val font: BitmapFont) : Screen {
         setGameState(GameState.RESET)
     }
 
+    fun setGameState(state: GameState) {
+        startTime = 0f
+        gameState = state
+    }
+
+    // private functions
     private fun update(delta: Float) {
         world.step(1 / APP_FPS, 6, 2)
         playerBall.moveBall(delta)
@@ -111,9 +118,23 @@ class GameScreen(pongGame: RiggedPong, private val font: BitmapFont) : Screen {
         camera.update()
     }
 
-    private fun setGameState(state: GameState) {
-        startTime = 0f
-        gameState = state
+    private fun gameOver() {
+        if (rounds == 0) {
+            //show result
+            val gameOverIntent = Intent(activity, GameOver::class.java)
+            gameOverIntent.putExtra("SCORE", score)
+            game.dispose()
+            activity.startActivity(gameOverIntent)
+        }
+    }
+
+    private fun resetObjectPositions() {
+        playerBall.getBallSprite().setPosition(
+                (playerBall.getBallBody().position.x * PPM * SCALE) - playerBall.getBallSprite().width / 2f,
+                (playerBall.getBallBody().position.y * PPM * SCALE) - playerBall.getBallSprite().height / 2f)
+        playerBall.getBallBody().setTransform((playerBall.getBallSprite().x) / PPM / SCALE,
+                playerBall.getBallSprite().y / PPM / SCALE,
+                playerBall.getBallBody().angle)
     }
 
     private fun renderRounds() {
@@ -210,18 +231,7 @@ class GameScreen(pongGame: RiggedPong, private val font: BitmapFont) : Screen {
         return world.createJoint(pDef)
     }
 
-    private fun resetObjectPositions() {
-        playerBall.getBallSprite().setPosition(
-                (playerBall.getBallBody().position.x * PPM * SCALE) - playerBall.getBallSprite().width / 2f,
-                (playerBall.getBallBody().position.y * PPM * SCALE) - playerBall.getBallSprite().height / 2f)
-        playerBall.getBallBody().setTransform((playerBall.getBallSprite().x) / PPM / SCALE,
-                playerBall.getBallSprite().y / PPM / SCALE,
-                playerBall.getBallBody().angle)
-        /*   paddleLeft.getPaddleSprite().setPosition(
-                   (paddleLeft.getPaddleBody().position.x * PPM * SCALE) - paddleLeft.getPaddleSprite().width/2f,
-                   (paddleLeft.getPaddleBody().position.y * PPM * SCALE)- paddleLeft.getPaddleSprite().height/2f)
-           paddleRight.getPaddleSprite().setPosition(
-                   (paddleRight.getPaddleBody().position.x * PPM * SCALE) - paddleRight.getPaddleSprite().width/2f,
-                   (paddleRight.getPaddleBody().position.y * PPM * SCALE)- paddleRight.getPaddleSprite().height/2f)*/
-    }
 }
+
+
+

@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.anni.riggedpongsensorproject">
 
-    <uses-feature
-        android:name="android.hardware.sensor.accelerometer"
-        android:required="true" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true"/>
 
     <application
         android:allowBackup="true"
@@ -24,6 +24,11 @@
         <activity
             android:name=".Launcher"
             android:screenOrientation="landscape" />
+        <activity
+            android:name=".screens.GameOver"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".screens.LeaderBoard"
+            android:screenOrientation="landscape"/>
     </application>
-
 </manifest>

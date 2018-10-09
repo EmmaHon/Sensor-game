@@ -42,19 +42,19 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, private val isRig
         val maxDown = 300f
         //if (speedY >= MAX_SPEED)
         numberOfTicks++
-        paddleSprite.y = (maxDown * sin(numberOfTicks * 0.5f * Math.PI/ paddleSpeed).toFloat()) + maxTop
-        b2bodyPaddle.setTransform(b2bodyPaddle.position.x,(paddleSprite.y + paddleSprite.height/2f)/ PPM/ SCALE, b2bodyPaddle.angle)
+        paddleSprite.y = (maxDown * sin(numberOfTicks * 0.5f * Math.PI / paddleSpeed).toFloat()) + maxTop
+        b2bodyPaddle.setTransform(b2bodyPaddle.position.x, (paddleSprite.y + paddleSprite.height / 2f) / PPM / SCALE, b2bodyPaddle.angle)
     }
 
     private fun setupPaddle() {
-        paddleSprite.setPosition(paddleStartX - paddleSprite.width/2f,
-                                 paddleStartY - paddleSprite.height/2f)
+        paddleSprite.setPosition(paddleStartX - paddleSprite.width / 2f,
+                paddleStartY - paddleSprite.height / 2f)
         if (isRightPaddle) {
             paddleSprite.setFlip(true, true)
         }
-        createPaddleBody(world, paddleSprite.x + paddleSprite.width/2f,
-                        paddleSprite.y + paddleSprite.height/2f, ObjectBits.PADDLE.bits,
-                        ObjectBits.BALL.bits, 0)
+        createPaddleBody(world, paddleSprite.x + paddleSprite.width / 2f,
+                paddleSprite.y + paddleSprite.height / 2f, ObjectBits.PADDLE.bits,
+                ObjectBits.BALL.bits, 0)
     }
 
     private fun createPaddleBody(world: World, xPos: Float, yPos: Float,
@@ -63,11 +63,11 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, private val isRig
         bodyDef.type = BodyDef.BodyType.KinematicBody
         bodyDef.fixedRotation = false
         // set body to the same position as the sprite
-        bodyDef.position.set(xPos/ PPM/ SCALE, yPos/ PPM/ SCALE)
+        bodyDef.position.set(xPos / PPM / SCALE, yPos / PPM / SCALE)
         b2bodyPaddle = world.createBody(bodyDef)
         // define the dimensions of the physics shape
         val paddleShape = PolygonShape()
-        paddleShape.setAsBox(paddleSprite.width/ PPM/ 4f, paddleSprite.height/ PPM/ 4f)
+        paddleShape.setAsBox(paddleSprite.width / PPM / 4f, paddleSprite.height / PPM / 4f)
         val fDef = FixtureDef()
         fDef.shape = paddleShape
         fDef.density = DENSITY
