@@ -44,7 +44,7 @@ class RiggedPong(activity: Activity) : Game() {
 
     // private functions
     private fun createFont(): BitmapFont {
-        val fontFile = Gdx.files.internal("pixelite.fnt")
+        val fontFile = Gdx.files.internal("fonts/pixelite.fnt")
         val generator = FreeTypeFontGenerator(fontFile)
         val fontParam = FreeTypeFontGenerator.FreeTypeFontParameter()
         fontParam.size = 22

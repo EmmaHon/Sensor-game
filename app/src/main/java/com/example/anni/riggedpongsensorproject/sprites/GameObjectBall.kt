@@ -12,11 +12,10 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
+import com.example.anni.riggedpongsensorproject.managers.AssetManager
 import com.example.anni.riggedpongsensorproject.utils.ObjectBits
 import com.example.anni.riggedpongsensorproject.utils.PaddleHit
 import kotlin.experimental.or
-import kotlin.math.log
-import kotlin.math.sin
 
 class GameObjectBall(gameScreen: GameScreen) {
 
@@ -25,7 +24,7 @@ class GameObjectBall(gameScreen: GameScreen) {
     private val world = gameScreen.getWorld()
     private lateinit var b2bodyBall: Body
     // sprite
-    private val ballSprite = Sprite(gameScreen.getAtlasObjects().findRegion("RP_Asset_Ball"))
+    private val ballSprite = Sprite(AssetManager.ball)
     // features
     private val ballRadius = 32f
     private val ballRestitution = 0.5f
@@ -83,7 +82,7 @@ class GameObjectBall(gameScreen: GameScreen) {
 
     fun moveBall(delta: Float, paddleLeft: Paddle, paddleRight: Paddle) {
         numberOfTicks++
-        // check the input and calculate the acceleration
+        // check if the sensor is available
         if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
             // set the acceleration base on the accelerometer input
             // inverted axis because the game is displayed in landscape mode
@@ -149,15 +148,6 @@ class GameObjectBall(gameScreen: GameScreen) {
                 velocity.x = 0f
             if (VectorUtils.adjustByRangeY(position, 100f, (Gdx.graphics.height - 100f)))
                 velocity.y = 0f
-
-            // update the ball's actual sprite and body position
-            /* player controls only y-axis movement
-            val maxTop = camera.viewportWidth
-            val maxDown = 700f
-            val currentSpeed = 80f
-            ballSprite.x = (maxDown * sin(numberOfTicks * 0.5f * Math.PI/ currentSpeed).toFloat()) + maxTop
-            ballSprite.y = ((b2bodyBall.position.y * PPM * SCALE) - ballSprite.height/ 2f)
-            b2bodyBall.setTransform((ballSprite.x + ballSprite.width/2f)/ PPM/ SCALE, position.y / PPM / SCALE, b2bodyBall.angle)*/
 
             // player controls y- and x-axis
             ballSprite.setPosition(

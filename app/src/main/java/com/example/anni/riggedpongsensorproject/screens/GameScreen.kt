@@ -1,39 +1,33 @@
 package com.example.anni.riggedpongsensorproject.screens
 
-import android.content.res.Resources
 import android.util.Log
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef
-import com.example.anni.riggedpongsensorproject.sprites.GameObjectBall
 import com.example.anni.riggedpongsensorproject.RiggedPong
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_FPS
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
+import com.example.anni.riggedpongsensorproject.managers.AssetManager
 import com.example.anni.riggedpongsensorproject.listeners.BallContactListener
 import com.example.anni.riggedpongsensorproject.sprites.DeathZone
+import com.example.anni.riggedpongsensorproject.sprites.GameObjectBall
 import com.example.anni.riggedpongsensorproject.sprites.Paddle
 import com.example.anni.riggedpongsensorproject.utils.GameState
 
 class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
 
-    private val game = pongGame
     private val font = pongFont
     private val batch = pongGame.getSpriteBatch()
-    private val textureAtlas = TextureAtlas("rp_sprites.atlas")
     private val screenWidth = Gdx.graphics.width.toFloat()
     private val screenHeight = Gdx.graphics.height.toFloat()
     private val camera = OrthographicCamera(screenWidth, screenHeight)
-    // box2d
     private lateinit var world: World
-    private val b2Debug = Box2DDebugRenderer() // render body objects for debugging
     private lateinit var playerBall: GameObjectBall
     lateinit var paddleLeft: Paddle
     lateinit var paddleRight: Paddle
@@ -44,11 +38,10 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
     var score = 0
     var rounds = 3
 
-    // what needs to be in memory, otherwise move to show-method
     init {
         // sets a viewport according to given width and height
         camera.setToOrtho(false, screenWidth, screenHeight)
-        Log.d("DEBUG1", "ROUNDS: $rounds")
+        AssetManager.load()
     }
 
     // public functions
@@ -58,10 +51,6 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
 
     fun getCamera(): OrthographicCamera {
         return camera
-    }
-
-    fun getAtlasObjects(): TextureAtlas {
-        return textureAtlas
     }
 
     fun setGameState(state: GameState) {
@@ -116,7 +105,6 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
                 Log.d("DEBUG", "game over!")
             }
         }
-        b2Debug.render(world, camera.combined.cpy().scl(PPM))
     }
 
     override fun hide() {}
@@ -135,11 +123,11 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
 
     // called when app is destroyed
     override fun dispose() {
-        textureAtlas.dispose()
+        AssetManager.disposeTextures()
     }
 
     private fun renderRounds() {
-        val roundUITexture1 = Texture(Gdx.files.internal("rp_ui_round.png"))
+        val roundUITexture1 = AssetManager.roundIndicator
         when (rounds) {
             3 -> {
                 batch.draw(roundUITexture1, (camera.viewportWidth / 2f - 30f) * SCALE - roundUITexture1.width / 2f,
@@ -161,7 +149,6 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
             }
             else -> {
                 // rounds = 0, no need to render anything
-                Log.d("DEBUG", "no rounds left")
             }
         }
     }
@@ -195,7 +182,7 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
     }
 
     private fun renderBackground() {
-        val backgroundTexture = textureAtlas.findRegion("RP_Asset_Play_Area")
+        val backgroundTexture = AssetManager.backGround
         batch.draw(backgroundTexture, 0f, 0f, screenWidth, screenHeight)
     }
 
@@ -212,8 +199,8 @@ class GameScreen(pongGame: RiggedPong, pongFont: BitmapFont) : Screen {
         paddleLeft = Paddle(this, 220f, camera.viewportHeight / 2, 0)
         paddleRight = Paddle(this, camera.viewportWidth - 220f, camera.viewportHeight / 2f, 1)
         // deathZones
-        deathZoneLeft = DeathZone(world, 330f, camera.viewportHeight - 250f, 1f, camera.viewportHeight / 2f)
-        deathZoneRight = DeathZone(world, 330f, camera.viewportHeight - 250f, camera.viewportWidth - 1f, camera.viewportHeight / 2)
+        deathZoneLeft = DeathZone(world, 300f, camera.viewportHeight - 270f, 0f, camera.viewportHeight / 2f)
+        deathZoneRight = DeathZone(world, 300f, camera.viewportHeight - 270f, camera.viewportWidth, camera.viewportHeight / 2)
         // Joint between paddle and deathZone
         createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight / 2,
                 -camera.viewportHeight / 2, Vector2(110f / PPM, 0f), Vector2(0f, 0f))

@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.*
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
+import com.example.anni.riggedpongsensorproject.managers.AssetManager
 import com.example.anni.riggedpongsensorproject.screens.GameScreen
 import com.example.anni.riggedpongsensorproject.utils.ObjectBits
 import com.example.anni.riggedpongsensorproject.utils.random
@@ -18,7 +19,7 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, side: Int) {
     private val camera = gameScreen.getCamera()
     private val screenSide = side
     private lateinit var b2bodyPaddle: Body
-    private val paddleSprite = Sprite(gameScreen.getAtlasObjects().findRegion("RP_Asset_Bat_LEFT"))
+    private val paddleSprite = Sprite(AssetManager.paddle)
     private val paddleStartX = xPos
     private val paddleStartY = yPos
     private var numberOfTicks = 0

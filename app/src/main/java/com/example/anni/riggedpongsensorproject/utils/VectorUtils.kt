@@ -44,7 +44,7 @@ object VectorUtils {
      * Returns `true` if at least one of the values was adjusted,
      * `false` otherwise.
      */
-    fun adjustByRange(vector: Vector2, xMin: Float, xMax: Float,
+    private fun adjustByRange(vector: Vector2, xMin: Float, xMax: Float,
                       yMin: Float, yMax: Float): Boolean {
         var modified = false
         if (adjustByRangeX(vector, xMin, xMax)) modified = true
