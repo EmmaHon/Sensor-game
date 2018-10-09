@@ -5,10 +5,10 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse
 import com.badlogic.gdx.physics.box2d.ContactListener
 import com.badlogic.gdx.physics.box2d.Manifold
 import com.example.anni.riggedpongsensorproject.screens.GameScreen
-import com.example.anni.riggedpongsensorproject.sprites.DeathZone
-import com.example.anni.riggedpongsensorproject.sprites.GameObjectBall
-import com.example.anni.riggedpongsensorproject.sprites.Paddle
-import com.example.anni.riggedpongsensorproject.utils.PaddleHit
+import com.example.anni.riggedpongsensorproject.objects.DeathZone
+import com.example.anni.riggedpongsensorproject.objects.GameObjectBall
+import com.example.anni.riggedpongsensorproject.objects.Paddle
+import com.example.anni.riggedpongsensorproject.utils.Paddles
 
 open class BallContactListener(private val gameScreen: GameScreen, private val playerBall: GameObjectBall,
                                private val paddleLeft: Paddle, private val paddleRight: Paddle,
@@ -24,7 +24,6 @@ open class BallContactListener(private val gameScreen: GameScreen, private val p
             --gameScreen.rounds
             gameScreen.resetPlayArea()
             if (gameScreen.rounds <= 0) {
-                //setGameState(GameState.GAME_OVER)
             }
         }
         // collision with paddles, increase score here
@@ -33,23 +32,23 @@ open class BallContactListener(private val gameScreen: GameScreen, private val p
             playerBall.paddleContact = true
             // set the current paddle contact
             when (fixA) {
-                paddleLeft.getPaddleBody() -> playerBall.currentPaddle = PaddleHit.LEFT_PADDLE
-                paddleRight.getPaddleBody() -> playerBall.currentPaddle = PaddleHit.RIGHT_PADDLE
+                paddleLeft.getPaddleBody() -> playerBall.currentPaddle = Paddles.LEFT_PADDLE
+                paddleRight.getPaddleBody() -> playerBall.currentPaddle = Paddles.RIGHT_PADDLE
             }
             // if no previous contact with a paddle, set previous contact paddle
-            if (playerBall.previousPaddle == PaddleHit.NO_PADDLE) {
+            if (playerBall.previousPaddle == Paddles.NO_PADDLE) {
                 gameScreen.score += 10
-                if (fixA == paddleLeft.getPaddleBody()) playerBall.previousPaddle = PaddleHit.LEFT_PADDLE
-                if (fixA == paddleRight.getPaddleBody()) playerBall.previousPaddle = PaddleHit.RIGHT_PADDLE
+                if (fixA == paddleLeft.getPaddleBody()) playerBall.previousPaddle = Paddles.LEFT_PADDLE
+                if (fixA == paddleRight.getPaddleBody()) playerBall.previousPaddle = Paddles.RIGHT_PADDLE
             // increase score only when paddles are contacted in turns
             } else {
-                if (playerBall.currentPaddle == PaddleHit.LEFT_PADDLE && playerBall.previousPaddle == PaddleHit.RIGHT_PADDLE) {
+                if (playerBall.currentPaddle == Paddles.LEFT_PADDLE && playerBall.previousPaddle == Paddles.RIGHT_PADDLE) {
                     gameScreen.score += 10
-                    playerBall.previousPaddle = PaddleHit.LEFT_PADDLE
+                    playerBall.previousPaddle = Paddles.LEFT_PADDLE
                 }
-                if (playerBall.currentPaddle == PaddleHit.RIGHT_PADDLE && playerBall.previousPaddle == PaddleHit.LEFT_PADDLE) {
+                if (playerBall.currentPaddle == Paddles.RIGHT_PADDLE && playerBall.previousPaddle == Paddles.LEFT_PADDLE) {
                     gameScreen.score += 10
-                    playerBall.previousPaddle = PaddleHit.RIGHT_PADDLE
+                    playerBall.previousPaddle = Paddles.RIGHT_PADDLE
                 }
             }
         }
@@ -60,5 +59,6 @@ open class BallContactListener(private val gameScreen: GameScreen, private val p
     }
 
     override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}
+
     override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {}
 }

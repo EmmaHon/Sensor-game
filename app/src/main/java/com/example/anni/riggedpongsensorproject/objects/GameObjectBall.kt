@@ -1,6 +1,5 @@
-package com.example.anni.riggedpongsensorproject.sprites
+package com.example.anni.riggedpongsensorproject.objects
 
-import android.util.Log
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.g2d.Sprite
@@ -14,37 +13,34 @@ import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.SCALE
 import com.example.anni.riggedpongsensorproject.managers.AssetManager
 import com.example.anni.riggedpongsensorproject.utils.ObjectBits
-import com.example.anni.riggedpongsensorproject.utils.PaddleHit
-import kotlin.experimental.or
+import com.example.anni.riggedpongsensorproject.utils.Paddles
 
-class GameObjectBall(gameScreen: GameScreen) {
+class GameObjectBall(game: GameScreen) {
 
-    private val game = gameScreen
-    private val camera = gameScreen.getCamera()
-    private val world = gameScreen.getWorld()
-    private lateinit var b2bodyBall: Body
-    // sprite
+    companion object {
+        private const val MAX_SPEED = 350f
+        private const val MAX_ACCELERATION = 20f
+        private const val MAX_DECELERATION = MAX_ACCELERATION / 2
+    }
+
+    private val camera = game.getCamera()
+    private val world = game.getWorld()
     private val ballSprite = Sprite(AssetManager.ball)
-    // features
     private val ballRadius = 32f
     private val ballRestitution = 0.5f
-    // Movement
-    private val MAX_SPEED = 350f
-    private val MAX_ACCELERATION = 20f
-    private val MAX_DECELERATION = MAX_ACCELERATION / 2
     private val acceleration = Vector2()
     private var numberOfTicks = 0
-    var position = Vector2() //ball position
-    var velocity = Vector2()
-    var firstStarted = true
+    private var position = Vector2()
+    private var velocity = Vector2()
+    private var firstStarted = true
+    private lateinit var b2bodyBall: Body
     var paddleContact = false
-    var previousPaddle = PaddleHit.NO_PADDLE
-    var currentPaddle = PaddleHit.NO_PADDLE
+    var previousPaddle = Paddles.NO_PADDLE
+    var currentPaddle = Paddles.NO_PADDLE
 
     init {
         setupBallObject()
     }
-
 
     fun getBallBody(): Body {
         return b2bodyBall
@@ -54,33 +50,23 @@ class GameObjectBall(gameScreen: GameScreen) {
         return ballSprite
     }
 
+    // center ball in the middle of the screen
     fun setCenterDimensions() {
-        Log.d("DEBUGMOVE", "bound ball to center")
         if (VectorUtils.adjustByRangeX(position, Gdx.graphics.width / 2f, Gdx.graphics.width / 2f))
             velocity.x = 0f
         if (VectorUtils.adjustByRangeY(position, Gdx.graphics.height / 2f, Gdx.graphics.height / 2f))
             velocity.y = 0f
     }
 
-    private fun setHitPaddleDimension(paddleLeft: Paddle, paddleRight: Paddle) {
-        val height = camera.viewportHeight * SCALE
+    //
+    private fun setHitPaddleDimension() {
         val width = camera.viewportWidth * SCALE
-        Log.d("DEBUG1", "paddle LEFT POS: ${paddleLeft.getPaddleBodyPosition()} " +
-                "and paddle RIGHT POS: ${paddleRight.getPaddleBodyPosition()}")
-        Log.d("DEBUG2", "position: $position")
         if (VectorUtils.adjustByRangeX(position, 250f, width - 250f)) {
             velocity.x = 0f
-            Log.d("DEBUG3","ADJUSTRANGE X: min x: 220f and max x: ${width-220f}")
         }
-        /*if (VectorUtils.adjustByRangeY(position, height/ 2f - paddleLeft.getPaddleSprite().height/2f,
-                        height/ 2f + paddleLeft.getPaddleSprite().height/2f)) {
-            velocity.y = 0f
-            Log.d("DEBUG4", "ADJUSTRANGE Y: min y: ${height/ 2f - paddleLeft.getPaddleSprite().height/2f}" +
-                    " and max y: ${height/ 2f + paddleLeft.getPaddleSprite().height/2f}")
-        }*/
     }
 
-    fun moveBall(delta: Float, paddleLeft: Paddle, paddleRight: Paddle) {
+    fun moveBall(delta: Float) {
         numberOfTicks++
         // check if the sensor is available
         if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
@@ -95,7 +81,7 @@ class GameObjectBall(gameScreen: GameScreen) {
                     firstStarted = false
                 }
                 paddleContact -> {
-                    setHitPaddleDimension(paddleLeft, paddleRight)
+                    setHitPaddleDimension()
                 }
             }
             // set the acceleration bounds
@@ -103,7 +89,6 @@ class GameObjectBall(gameScreen: GameScreen) {
             // set the input deadzone
             if (!VectorUtils.adjustDeadzone(acceleration, 1f, 0f)) {
                 // we're out of the deadzone, so let's adjust the acceleration
-                // (2 is 100% of the max acceleration)
                 acceleration.x = (acceleration.x / 2 * MAX_ACCELERATION)
                 acceleration.y = (-acceleration.y / 2 * MAX_ACCELERATION)
             }
@@ -136,12 +121,12 @@ class GameObjectBall(gameScreen: GameScreen) {
                     }
                 }
             }
-            // modify and check the ball's velocity
+            // modify and check the player's velocity
             velocity.add(acceleration)
             VectorUtils.adjustByRange(velocity, -MAX_SPEED, MAX_SPEED)
-            // modify and check the ball's position, applying the delta parameter
+            // modify and check the player's position
             position.add(velocity.x * delta, velocity.y * delta)
-            // check the ball's position against the stage's dimensions, correcting it if
+            // check the player's position against the stage's dimensions, correcting it if
             // needed and zeroing the velocity, so that the ball stops moving in the
             // current direction.
             if (VectorUtils.adjustByRangeX(position, ballSprite.width / 2f, (Gdx.graphics.width - ballSprite.width / 2f)))
@@ -149,7 +134,7 @@ class GameObjectBall(gameScreen: GameScreen) {
             if (VectorUtils.adjustByRangeY(position, 100f, (Gdx.graphics.height - 100f)))
                 velocity.y = 0f
 
-            // player controls y- and x-axis
+            // set the actual position of the player
             ballSprite.setPosition(
                     ((b2bodyBall.position.x * PPM * SCALE) - ballSprite.width / 2f),
                     ((b2bodyBall.position.y * PPM * SCALE) - ballSprite.height / 2f))
@@ -158,25 +143,23 @@ class GameObjectBall(gameScreen: GameScreen) {
     }
 
     private fun setupBallObject() {
-        // position sprite the center of the screen
+        // position sprite to the center of the screen
         ballSprite.setPosition(camera.viewportWidth / 2f - ballSprite.width / 2f,
                 camera.viewportHeight / 2f - ballSprite.height / 2f)
         createBallBody(world, ballSprite.x + ballSprite.width / 2f, ballSprite.y + ballSprite.height / 2f,
-                ballRadius, ObjectBits.BALL.bits, ObjectBits.PADDLE.bits or
-                ObjectBits.WALL.bits, 0)
+                ballRadius, ObjectBits.BALL.bits, ObjectBits.PADDLE.bits, 0)
     }
 
-    // create physics body
     private fun createBallBody(world: World, xPos: Float, yPos: Float, radius: Float,
                                cBits: Short, mBits: Short, gIndex: Short) {
-        var bodyDef = BodyDef()
+        val bodyDef = BodyDef()
         bodyDef.type = BodyDef.BodyType.DynamicBody
         bodyDef.fixedRotation = true
         bodyDef.position.set(xPos / PPM / SCALE, yPos / PPM / SCALE)
         b2bodyBall = world.createBody(bodyDef)
         val roundShape = CircleShape()
         roundShape.radius = (radius / PPM / SCALE)
-        var fDef = FixtureDef()
+        val fDef = FixtureDef()
         fDef.shape = roundShape
         fDef.density = DENSITY
         //affects "bounciness"
@@ -187,7 +170,5 @@ class GameObjectBall(gameScreen: GameScreen) {
         fDef.filter.groupIndex = gIndex
         b2bodyBall.createFixture(fDef)
         roundShape.dispose()
-        // return b2body
     }
-
 }

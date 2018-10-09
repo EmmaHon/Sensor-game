@@ -8,6 +8,6 @@ class Launcher : AndroidApplication() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val config = AndroidApplicationConfiguration()
-        initialize(RiggedPong(this), config)
+        initialize(RiggedPong(), config)
     }
 }

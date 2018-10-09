@@ -9,7 +9,7 @@ class AssetManager {
 
     companion object {
 
-        lateinit var gameScreenAtlas: TextureAtlas
+        private lateinit var gameScreenAtlas: TextureAtlas
         lateinit var ball: TextureRegion
         lateinit var paddle: TextureRegion
         lateinit var backGround: TextureRegion
