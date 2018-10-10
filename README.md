@@ -74,9 +74,9 @@ For the last week 3 we concentrated getting all the most important implementatio
 **Screenshots**
 
 <img src="https://preview.ibb.co/gHrqYp/Screenshot_20181010_021110.png" alt="rigged_pong_gamescreen" border="0">
-<a href="https://ibb.co/mCNKR9"><img src="https://preview.ibb.co/jX4oKU/Screenshot_20181010_021133.png" alt="Screenshot_20181010_021133" border="0"></a>
-<a href="https://ibb.co/nOgqYp"><img src="https://preview.ibb.co/kKDR69/Screenshot_20181010_112656.png" alt="Screenshot_20181010_112656" border="0"></a>
-<a href="https://ibb.co/cX0Ztp"><img src="https://preview.ibb.co/e5b7Dp/Screenshot_20181010_112643.png" alt="Screenshot_20181010_112643" border="0"></a>
+<img src="https://preview.ibb.co/jX4oKU/Screenshot_20181010_021133.png" alt="Screenshot_20181010_021133" border="0">
+<img src="https://preview.ibb.co/kKDR69/Screenshot_20181010_112656.png" alt="Screenshot_20181010_112656" border="0">
+<img src="https://preview.ibb.co/e5b7Dp/Screenshot_20181010_112643.png" alt="Screenshot_20181010_112643" border="0">
 
 ---
 **Credits**
