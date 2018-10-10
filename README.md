@@ -1,6 +1,8 @@
 # Rigged Pong
 Metropolia UAS Sensor Based Mobile Applications TX00CK66-3004 course project
 
+<a href="https://ibb.co/fYXEtp"><img src="https://preview.ibb.co/mMkZtp/Screenshot_20181010_112650.png" alt="rigged_pong_game_menu" border="0"></a>
+
 The main idea of Rigged Pong game project is to increase your score by hitting paddles on the sides of the screen with a ball. Player controls the ball tilting the phone in x-y-axis, using the accelerometer sensor. Player starts with three rounds and they are lost by entering the "death zone" behind the paddles. After all three rounds are lost, the player can see their score on the Game Over-screen 
 
 
