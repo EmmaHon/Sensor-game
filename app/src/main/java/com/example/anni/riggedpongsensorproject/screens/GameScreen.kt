@@ -1,8 +1,12 @@
 package com.example.anni.riggedpongsensorproject.screens
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.support.v4.content.ContextCompat.startActivity
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -10,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef
+import com.example.anni.riggedpongsensorproject.MainActivity
 import com.example.anni.riggedpongsensorproject.RiggedPong
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.APP_FPS
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.PPM
@@ -21,7 +26,8 @@ import com.example.anni.riggedpongsensorproject.objects.GameObjectBall
 import com.example.anni.riggedpongsensorproject.objects.Paddle
 import com.example.anni.riggedpongsensorproject.utils.GameState
 
-class GameScreen(private val activity: Activity, private val game: RiggedPong, private val font: BitmapFont) : Screen {
+class GameScreen(private val activity: Activity, private val game: RiggedPong,
+                 private val font: BitmapFont) : Screen {
 
     private val batch = game.getSpriteBatch()
     private val screenWidth = Gdx.graphics.width.toFloat()
@@ -119,13 +125,10 @@ class GameScreen(private val activity: Activity, private val game: RiggedPong, p
     }
 
     private fun gameOver() {
-        if (rounds < 0) {
-            //show result
-            val gameOverIntent = Intent(activity, GameOver::class.java)
-            gameOverIntent.putExtra("SCORE", score)
-            game.dispose()
-            activity.startActivity(gameOverIntent)
-        }
+        val gameOverIntent = Intent(activity, GameOver::class.java)
+        gameOverIntent.putExtra("SCORE", score)
+        game.dispose()
+        activity.startActivity(gameOverIntent)
     }
 
     private fun resetObjectPositions() {
@@ -230,7 +233,6 @@ class GameScreen(private val activity: Activity, private val game: RiggedPong, p
         pDef.lowerTranslation = lowerLimit / PPM
         return world.createJoint(pDef)
     }
-
 }
 
 

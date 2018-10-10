@@ -24,7 +24,7 @@ open class BallContactListener(private val gameScreen: GameScreen, private val p
                 && fixB == playerBall.getBallBody()) {
             --gameScreen.rounds
             gameScreen.resetPlayArea()
-            if (gameScreen.rounds <= 0) {
+            if (gameScreen.rounds < 0) {
                 gameScreen.setGameState(GameState.GAME_OVER)
             }
         }

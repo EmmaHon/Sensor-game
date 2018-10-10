@@ -26,7 +26,6 @@ class GameOver : AppCompatActivity() {
         builder.show()
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.gameover_screen)
