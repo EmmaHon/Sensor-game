@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -66,6 +67,7 @@ class GameOver : AppCompatActivity() {
 
     private fun launchMenu() {
         val menuIntent = Intent(applicationContext, MainActivity::class.java)
+        menuIntent.flags = FLAG_ACTIVITY_CLEAR_TOP
         startActivity(menuIntent)
     }
 }

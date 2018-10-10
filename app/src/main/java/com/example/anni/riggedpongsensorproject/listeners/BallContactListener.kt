@@ -8,6 +8,7 @@ import com.example.anni.riggedpongsensorproject.screens.GameScreen
 import com.example.anni.riggedpongsensorproject.objects.DeathZone
 import com.example.anni.riggedpongsensorproject.objects.GameObjectBall
 import com.example.anni.riggedpongsensorproject.objects.Paddle
+import com.example.anni.riggedpongsensorproject.utils.Constants
 import com.example.anni.riggedpongsensorproject.utils.GameState
 import com.example.anni.riggedpongsensorproject.utils.Paddles
 
@@ -39,17 +40,17 @@ open class BallContactListener(private val gameScreen: GameScreen, private val p
             }
             // if no previous contact with a paddle, set previous contact paddle
             if (playerBall.previousPaddle == Paddles.NO_PADDLE) {
-                gameScreen.score += 10
+                gameScreen.score += Constants.scoreAddition
                 if (fixA == paddleLeft.getPaddleBody()) playerBall.previousPaddle = Paddles.LEFT_PADDLE
                 if (fixA == paddleRight.getPaddleBody()) playerBall.previousPaddle = Paddles.RIGHT_PADDLE
             // increase score only when paddles are contacted in turns
             } else {
                 if (playerBall.currentPaddle == Paddles.LEFT_PADDLE && playerBall.previousPaddle == Paddles.RIGHT_PADDLE) {
-                    gameScreen.score += 10
+                    gameScreen.score += Constants.scoreAddition
                     playerBall.previousPaddle = Paddles.LEFT_PADDLE
                 }
                 if (playerBall.currentPaddle == Paddles.RIGHT_PADDLE && playerBall.previousPaddle == Paddles.LEFT_PADDLE) {
-                    gameScreen.score += 10
+                    gameScreen.score += Constants.scoreAddition
                     playerBall.previousPaddle = Paddles.RIGHT_PADDLE
                 }
             }

@@ -24,6 +24,7 @@ import com.example.anni.riggedpongsensorproject.listeners.BallContactListener
 import com.example.anni.riggedpongsensorproject.objects.DeathZone
 import com.example.anni.riggedpongsensorproject.objects.GameObjectBall
 import com.example.anni.riggedpongsensorproject.objects.Paddle
+import com.example.anni.riggedpongsensorproject.utils.Constants
 import com.example.anni.riggedpongsensorproject.utils.GameState
 
 class GameScreen(private val activity: Activity, private val game: RiggedPong,
@@ -58,7 +59,7 @@ class GameScreen(private val activity: Activity, private val game: RiggedPong,
     }
 
     override fun resize(width: Int, height: Int) {
-        camera.setToOrtho(false, width / RiggedPong.SCALE, height / RiggedPong.SCALE)
+        camera.setToOrtho(false, width/ SCALE, height/ SCALE)
     }
 
     override fun hide() {}
@@ -206,15 +207,32 @@ class GameScreen(private val activity: Activity, private val game: RiggedPong,
     }
 
     private fun setupPlayArea() {
-        paddleLeft = Paddle(this, 220f, camera.viewportHeight / 2, false)
-        paddleRight = Paddle(this, camera.viewportWidth - 220f, camera.viewportHeight / 2f, true)
-        deathZoneLeft = DeathZone(world, 300f, camera.viewportHeight - 270f, 0f, camera.viewportHeight / 2f)
-        deathZoneRight = DeathZone(world, 300f, camera.viewportHeight - 270f, camera.viewportWidth, camera.viewportHeight / 2)
+        paddleLeft = Paddle(this,
+                Constants.adjustPaddleStartX,
+                camera.viewportHeight / 2, false)
+        paddleRight = Paddle(this,
+                camera.viewportWidth - Constants.adjustPaddleStartX,
+                camera.viewportHeight / 2f, true)
+        deathZoneLeft = DeathZone(world, Constants.deathZoneWidth,
+                camera.viewportHeight - Constants.adjustDeathZoneStartY,
+                0f, camera.viewportHeight / 2f)
+        deathZoneRight = DeathZone(world, Constants.deathZoneWidth,
+                camera.viewportHeight - Constants.adjustDeathZoneStartY,
+                camera.viewportWidth,
+                camera.viewportHeight / 2)
         // Joint between paddle and deathZone
-        createJoint(deathZoneLeft.getDeathZoneBody(), paddleLeft.getPaddleBody(), camera.viewportHeight / 2,
-                -camera.viewportHeight / 2, Vector2(110f / PPM, 0f), Vector2(0f, 0f))
-        createJoint(deathZoneRight.getDeathZoneBody(), paddleRight.getPaddleBody(), camera.viewportHeight / 2,
-                -camera.viewportHeight / 2, Vector2(-110f / PPM, 0f), Vector2(0f, 0f))
+        createJoint(deathZoneLeft.getDeathZoneBody(),
+                paddleLeft.getPaddleBody(),
+                camera.viewportHeight / 2,
+                -camera.viewportHeight / 2,
+                Vector2(Constants.jointWidth / PPM, 0f),
+                Vector2(0f, 0f))
+        createJoint(deathZoneRight.getDeathZoneBody(),
+                paddleRight.getPaddleBody(),
+                camera.viewportHeight / 2,
+                -camera.viewportHeight / 2,
+                Vector2(-Constants.jointWidth / PPM, 0f),
+                Vector2(0f, 0f))
         playerBall = GameObjectBall(this)
     }
 
