@@ -1,5 +1,6 @@
 package com.example.anni.riggedpongsensorproject.objects
 
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.physics.box2d.*
 import com.example.anni.riggedpongsensorproject.RiggedPong.Companion.DENSITY
@@ -11,7 +12,8 @@ import com.example.anni.riggedpongsensorproject.utils.ObjectBits
 import com.example.anni.riggedpongsensorproject.utils.random
 import kotlin.math.sin
 
-class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, private val isRightPaddle: Boolean) {
+class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float,
+             private val isRightPaddle: Boolean, val soundEffect: Sound) {
 
     private val world = gameScreen.getWorld()
     private val camera = gameScreen.getCamera()

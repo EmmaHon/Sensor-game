@@ -33,19 +33,19 @@ class GameOver : AppCompatActivity() {
         setOnClickListeners()
 
         val score = intent.getIntExtra("SCORE", 0)
-        tv_scoreLabel.text = getString(R.string.scoreLabel, score.toString())
+        tv_scoreLabel.text = getString(R.string.score_label, score.toString())
 
         val settings = getSharedPreferences("GAME_DATA", Context.MODE_PRIVATE)
         val highScore = settings.getInt("HIGH_SCORE", 0)
 
         if (score > highScore) {
-            tv_highScoreLabel.text = getString(R.string.highScoreLabel, score.toString())
+            tv_highScoreLabel.text = getString(R.string.highscore_label, score.toString())
             //Save score to high score
             val editor = settings.edit()
             editor.putInt("HIGH_SCORE", score)
             editor.commit()
         } else {
-            tv_highScoreLabel.text = getString(R.string.highScoreLabel, highScore.toString())
+            tv_highScoreLabel.text = getString(R.string.highscore_label, highScore.toString())
         }
     }
 

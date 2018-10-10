@@ -8,8 +8,8 @@
     <string name="tryA">Try Again</string>
     <string name="gameOver">Game Over</string>
     <string name="Board">Leaderboard</string>
-    <string name="scoreLabel">%1$s</string>
-    <string name="highScoreLabel">%1$s</string>
+    <string name="score_label">%1$s</string>
+    <string name="highscore_label">%1$s</string>
     <!--Leaderboard-->
     <string name="backStart">Start Menu</string>
     <!--Info-->
@@ -18,13 +18,9 @@
         and try to hit the paddles on the screen. Hitting the paddles in turns scores 10 points.
         The game is over if the area behind the paddles is hit 4 times.</string>
     <string name="click">PingPong</string>
-
     <!--Credits-->
     <string name="developers">Developers:</string>
     <string name="names">Anni Luonuankoski\n and \n Emma Honkala</string>
     <string name="art">Game Art:</string>
     <string name="designer">Erik Eerola</string>
-
-    <!---<string name="scoreLabel">Score: %1$s</string>
-    <string name="highScoreLabel">High score: %1$s </string> -->
 </resources>

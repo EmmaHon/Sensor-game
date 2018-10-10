@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.provider.SyncStateContract.Helpers.update
 import android.support.v4.content.ContextCompat.startActivity
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputProcessor
@@ -69,7 +70,7 @@ class GameScreen(private val activity: Activity, private val game: RiggedPong,
     override fun resume() {}
 
     override fun dispose() {
-        AssetManager.disposeTextures()
+        AssetManager.dispose()
     }
 
     override fun render(delta: Float) {
@@ -88,7 +89,8 @@ class GameScreen(private val activity: Activity, private val game: RiggedPong,
                 if (startTime > 1) setGameState(GameState.PLAY)
             }
             GameState.GAME_OVER -> {
-                gameOver()
+                renderAll()
+                if (startTime > 2) gameOver()
             }
         }
     }
@@ -105,15 +107,19 @@ class GameScreen(private val activity: Activity, private val game: RiggedPong,
     fun resetPlayArea() {
         playerBall.setCenterDimensions()
         resetObjectPositions()
-        setGameState(GameState.RESET)
+        if (rounds < 0) {
+            setGameState(GameState.GAME_OVER)
+        } else {
+            setGameState(GameState.RESET)
+        }
     }
 
-    fun setGameState(state: GameState) {
+    // private functions
+    private fun setGameState(state: GameState) {
         startTime = 0f
         gameState = state
     }
 
-    // private functions
     private fun update(delta: Float) {
         world.step(1 / APP_FPS, 6, 2)
         playerBall.moveBall(delta)
@@ -209,10 +215,12 @@ class GameScreen(private val activity: Activity, private val game: RiggedPong,
     private fun setupPlayArea() {
         paddleLeft = Paddle(this,
                 Constants.adjustPaddleStartX,
-                camera.viewportHeight / 2, false)
+                camera.viewportHeight / 2, false,
+                AssetManager.paddleLeftSound)
         paddleRight = Paddle(this,
                 camera.viewportWidth - Constants.adjustPaddleStartX,
-                camera.viewportHeight / 2f, true)
+                camera.viewportHeight / 2f, true,
+                AssetManager.paddleRightSound)
         deathZoneLeft = DeathZone(world, Constants.deathZoneWidth,
                 camera.viewportHeight - Constants.adjustDeathZoneStartY,
                 0f, camera.viewportHeight / 2f)
