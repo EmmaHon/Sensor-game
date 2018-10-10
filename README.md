@@ -8,7 +8,7 @@ The main idea of Rigged Pong game project Mobile Phone held in portrait mode, ti
 
 **Getting started**  
 
-For this project we used [Android Studio](https://developer.android.com/studio/ "Android Studio") and [Kotlin](https://kotlinlang.org/ "Kotlin") language with the integration of [libGDX](https://libgdx.badlogicgames.com / "LibGDX").
+For this project we used [Android Studio](https://developer.android.com/studio/ "Android Studio") and [Kotlin](https://kotlinlang.org/ "Kotlin") language with the integration of [libGDX](https://libgdx.badlogicgames.com/ "LibGDX") .
 LibGDX has switched to Gradle, so 3rd party libraries can be added through the build.gradle(Module: app) file. 
 
 
