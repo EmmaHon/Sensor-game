@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/vertical_title_background">
+
+    <TextView
+        android:id="@+id/gameOver"
+        android:layout_width="248dp"
+        android:layout_height="51dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/game_over"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_scoreLabel"
+        android:layout_width="272dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="8dp"
+        android:drawableStart="@drawable/ascore"
+        android:fontFamily="@font/oswald_bold"
+        android:text="@string/scoreLabel"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/colorAccent"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gameOver"
+        app:layout_constraintVertical_bias="0.013" />
+
+    <TextView
+        android:id="@+id/tv_highScoreLabel"
+        android:layout_width="269dp"
+        android:layout_height="37dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:drawableStart="@drawable/highscore"
+        android:fontFamily="@font/oswald_bold"
+        android:text="@string/highScoreLabel"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/colorAccent"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_scoreLabel" />
+
+    <ImageButton
+        android:id="@+id/leaderboard_btn"
+        android:layout_width="58dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="216dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/home_icon"
+        android:contentDescription="@string/leaderboard_btn"
+        android:text="@string/leaderboard_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_highScoreLabel" />
+
+    <ImageButton
+        android:id="@+id/tryA"
+        android:layout_width="58dp"
+        android:layout_height="53dp"
+        android:layout_marginEnd="92dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/retry_button"
+        android:contentDescription="@string/tryA"
+        android:elevation="8dp"
+        android:text="@string/tryA"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.231"
+        app:layout_constraintStart_toEndOf="@+id/leaderboard_btn"
+        app:layout_constraintTop_toBottomOf="@+id/tv_highScoreLabel" />
+
+</android.support.constraint.ConstraintLayout>
