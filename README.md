@@ -1,21 +1,19 @@
 # Rigged Pong
 Metropolia UAS Sensor Based Mobile Applications TX00CK66-3004 course project
 
-The main idea of Rigged Pong game project Mobile Phone held in portrait mode, tilting up/down/right/left using the gyroscope/accelerometer sensor to control a ball’s x-y-axis movement, while trying to hit one of the bats at a time and accumulate points until all three rounds are lost. Rounds are lost by missing the bats three times on the game area's up or down sides and hitting the wrong bat.During game over the player is shown his/hers score and the highest score played.
+The main idea of Rigged Pong game project is to increase your score by hitting paddles on the sides of the screen with a ball. Player controls the ball tilting the phone in x-y-axis, using the accelerometer sensor Player starts with three rounds and they are lost by entering the "death zone" behind the paddles. After all three rounds are lost, the player can see their score on the Game Over-screen 
 
 
 ---  
 
 **Getting started**  
 
-For this project we used [Android Studio](https://developer.android.com/studio/ "Android Studio") and [Kotlin](https://kotlinlang.org/ "Kotlin") language with the integration of [libGDX](https://libgdx.badlogicgames.com/ "LibGDX") .
+For this project we used [Android Studio](https://developer.android.com/studio/ "Android Studio") and [Kotlin](https://kotlinlang.org/ "Kotlin") language with the integration of [libGDX](https://github.com/libGDX/libGDX "LibGDX") .
 LibGDX has switched to Gradle, so 3rd party libraries can be added through the build.gradle(Module: app) file. 
 
-
-Requirements for this application is an Android device which has API level 24 or higher which is Android version (Nougat) 7.0 - 7.1.2 or newer.
-LibGDX requires the minimum ofJava Development Kit 8+ (Must be JDK) and Android Studio , 3.1.2 to work. LibGDX was chosen for for this project as it is a free, open source cross platform game development framework.
-LibGDX can be downloaded through this here: https://libgdx.badlogicgames.com/nightlies/dist/gdx-setup.jar. 
-
+LibGdx libraries used: 
+* Box2D
+* Freetype
 
 --- 
 
