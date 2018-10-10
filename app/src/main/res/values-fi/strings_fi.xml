@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Start Menu-->
+    <string name="app_name">Rigged Pong</string>
+    <string name="start_game_btn">Aloita</string>
+    <string name="leaderboard_btn">Tulostaulukko</string>
+    <!--Game Over-->
+    <string name="tryA">Yritä uudelleen</string>
+    <string name="gameOver">Peli päättyi</string>
+    <string name="Board">""</string>
+    <string name="scoreLabel">""</string>
+    <string name="highScoreLabel">""</string>
+    <!--Leaderboard-->
+    <string name="backStart">Valikko</string>
+    <!--Info-->
+    <string name="infoTitle">Ohjeet</string>
+    <string name="gameInfo">Pelaajan tehtävänä on ohjata palloa kääntämällä puhelinta x-y-akselissa,
+        yrittäen osua kentän reunoilla liikkuviin mailoihin. Jokaisesta osumasta pelaaja kerrytttää 10 pistettä.
+        Peli päättyy mikäli pelaajan kierrokset ovat loppu pallon osuessa paitsioon.</string>
+    <string name="click">PingPong</string>
+
+    <!--Credits-->
+    <string name="developers">Ohjelmoijat:</string>
+    <string name="names">Anni Luonuankoski\n and \n Emma Honkala</string>
+    <string name="art">Peligrafiikka:</string>
+    <string name="designer">Erik Eerola</string>
+</resources>
