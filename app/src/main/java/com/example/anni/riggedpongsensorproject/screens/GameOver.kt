@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.example.anni.riggedpongsensorproject.Launcher
@@ -32,20 +33,19 @@ class GameOver : AppCompatActivity() {
         setOnClickListeners()
 
         val score = intent.getIntExtra("SCORE", 0)
-        tv_scoreLabel.text = "" + score
+        tv_scoreLabel.text = getString(R.string.scoreLabel, score.toString())
 
         val settings = getSharedPreferences("GAME_DATA", Context.MODE_PRIVATE)
         val highScore = settings.getInt("HIGH_SCORE", 0)
 
         if (score > highScore) {
-            tv_highScoreLabel.text = "" + score
-
+            tv_highScoreLabel.text = getString(R.string.highScoreLabel, score.toString())
             //Save score to high score
             val editor = settings.edit()
             editor.putInt("HIGH_SCORE", score)
             editor.commit()
         } else {
-            tv_highScoreLabel.text = "" + highScore
+            tv_highScoreLabel.text = getString(R.string.highScoreLabel, highScore.toString())
         }
     }
 
@@ -56,18 +56,13 @@ class GameOver : AppCompatActivity() {
             tryAgain()
         }
         leaderboardBtn.setOnClickListener {
-            launchLeaderboard()
+            launchMenu()
         }
     }
 
     private fun tryAgain() {
         val intent = Intent(applicationContext, Launcher::class.java)
         startActivity(intent)
-    }
-
-    private fun launchLeaderboard() {
-        val leaderBoardIntent = Intent(applicationContext, LeaderBoard::class.java)
-        startActivity(leaderBoardIntent)
     }
 
     private fun launchMenu() {

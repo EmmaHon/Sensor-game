@@ -18,7 +18,7 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, private val isRig
     private val paddleSprite = Sprite(AssetManager.paddle)
     private val paddleStartX = xPos
     private val paddleStartY = yPos
-    private val speedValues = IntRange(20, 100)
+    private val speedValues = IntRange(20, 90)
     private var paddleSpeed = speedValues.random()
     private var numberOfTicks = 0
     private lateinit var b2bodyPaddle: Body
@@ -37,10 +37,8 @@ class Paddle(gameScreen: GameScreen, xPos: Float, yPos: Float, private val isRig
 
     fun movePaddle() {
         // up-down paddle movement with sinusoidal motion
-        // TODO: random speeds (at a specific range) and direction
         val maxTop = camera.viewportHeight - 110f
         val maxDown = 300f
-        //if (speedY >= MAX_SPEED)
         numberOfTicks++
         paddleSprite.y = (maxDown * sin(numberOfTicks * 0.5f * Math.PI / paddleSpeed).toFloat()) + maxTop
         b2bodyPaddle.setTransform(b2bodyPaddle.position.x, (paddleSprite.y + paddleSprite.height / 2f) / PPM / SCALE, b2bodyPaddle.angle)

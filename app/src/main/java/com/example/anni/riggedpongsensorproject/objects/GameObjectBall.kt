@@ -58,7 +58,7 @@ class GameObjectBall(game: GameScreen) {
             velocity.y = 0f
     }
 
-    //
+    // prevent from going through paddles
     private fun setHitPaddleDimension() {
         val width = camera.viewportWidth * SCALE
         if (VectorUtils.adjustByRangeX(position, 250f, width - 250f)) {

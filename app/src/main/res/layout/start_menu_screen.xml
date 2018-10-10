@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/vertical_title_background">
@@ -10,57 +11,63 @@
         android:layout_width="363dp"
         android:layout_height="185dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/rp_title"
+        app:layout_constraintBottom_toTopOf="@+id/start_game_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/start_game_btn"
-        android:layout_width="189dp"
-        android:layout_height="73dp"
-        android:layout_marginBottom="80dp"
+        android:layout_width="208dp"
+        android:layout_height="84dp"
+        android:layout_marginBottom="48dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:background="@drawable/playbutton"
+        android:contentDescription="start game"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:contentDescription="start game"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/infoFragmentBtn"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="53dp"
+        android:layout_height="62dp"
         android:layout_marginBottom="60dp"
         android:layout_marginEnd="344dp"
         android:layout_marginStart="100dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/question"
-        android:backgroundTint="@android:color/white"
         android:contentDescription="@string/infoTitle"
         android:textAllCaps="false"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/leaderboard_btn"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.395"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.992" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <ImageButton
         android:id="@+id/leaderboard_btn"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="70dp"
+        android:layout_height="62dp"
         android:layout_marginBottom="60dp"
         android:layout_marginEnd="100dp"
         android:layout_marginStart="83dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/uihighscorebotton"
+        android:background="@drawable/uihighscorebutton"
+        android:contentDescription="Highscores"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.46"
         app:layout_constraintStart_toEndOf="@+id/start_game_btn"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.996"
-        android:contentDescription="Highscores"/>
+        app:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>

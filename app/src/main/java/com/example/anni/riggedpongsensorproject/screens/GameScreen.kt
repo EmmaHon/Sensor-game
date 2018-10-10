@@ -119,7 +119,7 @@ class GameScreen(private val activity: Activity, private val game: RiggedPong, p
     }
 
     private fun gameOver() {
-        if (rounds == 0) {
+        if (rounds < 0) {
             //show result
             val gameOverIntent = Intent(activity, GameOver::class.java)
             gameOverIntent.putExtra("SCORE", score)
